@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ('-date_published',),
-            },
+            }, 
         ),
         migrations.CreateModel(
             name='Profile',

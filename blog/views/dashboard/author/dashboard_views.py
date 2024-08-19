@@ -1,5 +1,3 @@
-# Django imports.
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponseRedirect
@@ -7,235 +5,152 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.utils import timezone
 from django.views.generic import View
 
-# Blog app imports.
 from blog.forms.blog.article_forms import ArticleUpdateForm, ArticleCreateForm
 from blog.models.article_models import Article
 
 
-class DashboardHomeView(LoginRequiredMixin, View):
-    """
-    Display homepage of the dashboard.
-    """
-    context = {}
+class DashboardHomeView(View):
     template_name = 'dashboard/author/dashboard_home.html'
 
     def get(self, request, *args, **kwargs):
-        """
-        Returns the author details
-        """
-
-        articles_list = Article.objects.filter(author=request.user)
+        articles_list = Article.objects.all()  # No longer filtered by author
 
         total_articles_written = len(articles_list)
-        total_articles_published = len(
-            articles_list.filter(status=Article.PUBLISHED, deleted=False))
+        total_articles_published = len(articles_list.filter(status=Article.PUBLISHED, deleted=False))
         total_articles_views = sum(article.views for article in articles_list)
-        total_articles_comments = sum(
-            article.comments.count() for article in articles_list)
+        total_articles_comments = sum(article.comments.count() for article in articles_list)
 
         recent_published_articles_list = articles_list.filter(
             status=Article.PUBLISHED, deleted=False).order_by("-date_published")[:5]
 
-        self.context['total_articles_written'] = total_articles_written
-        self.context['total_articles_published'] = total_articles_published
-        self.context['total_articles_views'] = total_articles_views
-        self.context['total_articles_comments'] = total_articles_comments
-        self.context['recent_published_articles_list'] = recent_published_articles_list
+        context = {
+            'total_articles_written': total_articles_written,
+            'total_articles_published': total_articles_published,
+            'total_articles_views': total_articles_views,
+            'total_articles_comments': total_articles_comments,
+            'recent_published_articles_list': recent_published_articles_list,
+        }
 
-        return render(request, self.template_name, self.context)
+        return render(request, self.template_name, context)
 
 
-class ArticleWriteView(LoginRequiredMixin, View):
-
-    SAVE_AS_DRAFT = "SAVE_AS_DRAFT"
-    PUBLISH = "PUBLISH"
-
+class ArticleWriteView(View):
     template_name = 'dashboard/author/article_create_form.html'
-    context_object = {}
 
     def get(self, request, *args, **kwargs):
-
         article_create_form = ArticleCreateForm()
-        self.context_object["article_create_form"] = article_create_form
-
-        return render(request, self.template_name, self.context_object)
+        context = {"article_create_form": article_create_form}
+        return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-
         article_create_form = ArticleCreateForm(request.POST, request.FILES)
-
         action = request.POST.get("action")
         article_status = request.POST["status"]
 
-        if action == self.SAVE_AS_DRAFT:
-
+        if action == "SAVE_AS_DRAFT":
             if article_status == Article.PUBLISHED:
-                self.context_object["article_create_form"] = article_create_form
-                messages.error(request,
-                               "You saved the article as draft but selected "
-                               "the status as 'PUBLISHED'. You can't save an "
-                               "article whose status is 'PUBLISHED' as draft. "
-                               "Please change the status to 'DRAFT' before you "
-                               "save the article as draft.")
-                return render(request, self.template_name, self.context_object)
+                context = {"article_create_form": article_create_form}
+                messages.error(request, "You can't save a published article as draft.")
+                return render(request, self.template_name, context)
 
             if article_create_form.is_valid():
-
                 new_article = article_create_form.save(commit=False)
-                new_article.author = request.user
                 new_article.date_published = None
                 new_article.save()
                 article_create_form.save_m2m()
 
-                messages.success(request, f"Article drafted successfully.")
+                messages.success(request, "Article drafted successfully.")
                 return redirect("blog:drafted_articles")
 
-            self.context_object["article_create_form"] = article_create_form
+            context = {"article_create_form": article_create_form}
             messages.error(request, "Please fill required fields")
-            return render(request, self.template_name, self.context_object)
+            return render(request, self.template_name, context)
 
-        if action == self.PUBLISH:
-
+        if action == "PUBLISH":
             if article_status == Article.DRAFTED:
-                self.context_object["article_create_form"] = article_create_form
-
-                messages.error(request,
-                               "You clicked on 'PUBLISH' to publish the article"
-                               " but selected the status as 'DRAFT'. "
-                               "You can't Publish an article whose status is "
-                               "'DRAFT'. Please change the status to "
-                               "'PUBLISHED' before you can Publish the "
-                               "article.")
-                return render(request, self.template_name, self.context_object)
+                context = {"article_create_form": article_create_form}
+                messages.error(request, "You can't publish an article marked as draft.")
+                return render(request, self.template_name, context)
 
             if article_create_form.is_valid():
                 new_article = article_create_form.save(commit=False)
-                new_article.author = request.user
                 new_article.save()
                 article_create_form.save_m2m()
 
-                messages.success(self.request, f"Article published successfully.")
-                return redirect(to="blog:dashboard_article_detail", slug=new_article.slug)
+                messages.success(request, "Article published successfully.")
+                return redirect("blog:dashboard_article_detail", slug=new_article.slug)
 
-            self.context_object["article_create_form"] = article_create_form
+            context = {"article_create_form": article_create_form}
             messages.error(request, "Please fill required fields")
-            return render(request, self.template_name, self.context_object)
+            return render(request, self.template_name, context)
 
 
-class ArticleUpdateView(LoginRequiredMixin, View):
-
-    SAVE_AS_DRAFT = "SAVE_AS_DRAFT"
-    PUBLISH = "PUBLISH"
-
+class ArticleUpdateView(View):
     template_name = 'dashboard/author/article_update_form.html'
-    context_object = {}
 
     def get(self, request, *args, **kwargs):
-
         old_article = get_object_or_404(Article, slug=self.kwargs.get("slug"))
         article_update_form = ArticleUpdateForm(instance=old_article, initial={'tags': old_article.tags.names})
-
-        self.context_object["article_update_form"] = article_update_form
-        self.context_object["article"] = old_article
-        return render(request, self.template_name, self.context_object)
+        context = {"article_update_form": article_update_form, "article": old_article}
+        return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-
         old_article = get_object_or_404(Article, slug=self.kwargs.get("slug"))
-        article_update_form = ArticleCreateForm(request.POST, request.FILES, instance=old_article)
-
+        article_update_form = ArticleUpdateForm(request.POST, request.FILES, instance=old_article)
         action = request.POST.get("action")
         article_status = request.POST["status"]
 
-        if action == self.SAVE_AS_DRAFT:
-
+        if action == "SAVE_AS_DRAFT":
             if article_status == Article.PUBLISHED:
-                self.context_object["article_update_form"] = article_update_form
-                messages.error(request,
-                               "You saved the article as draft but selected "
-                               "the status as 'PUBLISHED'. You can't save an "
-                               "article whose status is 'PUBLISHED' as draft. "
-                               "Please change the status to 'DRAFT' before you "
-                               "save the article as draft.")
-                return render(request, self.template_name, self.context_object)
-
-            if not request.user == old_article.author.username:
-                messages.error(request=self.request, message="You do not have permission to update this article.")
-                return redirect(to="blog:written_articles")
+                context = {"article_update_form": article_update_form}
+                messages.error(request, "You can't save a published article as draft.")
+                return render(request, self.template_name, context)
 
             if article_update_form.is_valid():
                 updated_article = article_update_form.save(commit=False)
-                updated_article.author = request.user
                 updated_article.date_published = None
                 updated_article.date_updated = timezone.now()
                 updated_article.save()
                 article_update_form.save_m2m()
 
-                messages.success(request, f"Article drafted successfully.")
+                messages.success(request, "Article drafted successfully.")
                 return redirect("blog:drafted_articles")
 
-            self.context_object["article_update_form"] = article_update_form
+            context = {"article_update_form": article_update_form}
             messages.error(request, "Please fill required fields")
-            return render(request, self.template_name, self.context_object)
+            return render(request, self.template_name, context)
 
-        if action == self.PUBLISH:
-
+        if action == "PUBLISH":
             if article_status == Article.DRAFTED:
-                self.context_object["article_update_form"] = article_update_form
-
-                messages.error(request,
-                               "You clicked on 'PUBLISH' to publish the article"
-                               " but selected the status as 'DRAFT'. "
-                               "You can't Publish an article whose status is "
-                               "'DRAFT'. Please change the status to "
-                               "'PUBLISHED' before you can Publish the "
-                               "article.")
-                return render(request, self.template_name, self.context_object)
+                context = {"article_update_form": article_update_form}
+                messages.error(request, "You can't publish an article marked as draft.")
+                return render(request, self.template_name, context)
 
             if article_update_form.is_valid():
-
                 updated_article = article_update_form.save(commit=False)
-                updated_article.author = request.user
                 updated_article.date_published = timezone.now()
                 updated_article.date_updated = timezone.now()
                 updated_article.save()
                 article_update_form.save_m2m()
 
-                messages.success(self.request, f"Article updated successfully.")
-                return redirect(to="blog:dashboard_article_detail", slug=updated_article.slug)
+                messages.success(request, "Article updated successfully.")
+                return redirect("blog:dashboard_article_detail", slug=updated_article.slug)
 
-            self.context_object["article_update_form"] = article_update_form
+            context = {"article_update_form": article_update_form}
             messages.error(request, "Please fill required fields")
-            return render(request, self.template_name, self.context_object)
+            return render(request, self.template_name, context)
 
 
-class ArticleDeleteView(LoginRequiredMixin, View):
-    """
-      Deletes article
-    """
-
+class ArticleDeleteView(View):
     def get(self, *args, **kwargs):
-        """
-           Checks if user who has requested to delete the article is the
-           owner of the article.
-           If the user is the owner, it sets the deleted field of the article to true and
-           return a successful message.
-           If the user is not the owner, it tells user he/she can't delete it
-        """
         article = get_object_or_404(Article, slug=self.kwargs.get("slug"))
-
-        if not self.request.user.username == article.author.username:
-            messages.error(request=self.request, message="You do not have permission to delete this article.")
-            return HttpResponseRedirect(self.request.META.get('HTTP_REFERER', '/'))
-
         article.deleted = True
         article.save()
-
         messages.success(request=self.request, message="Article Deleted Successfully")
-        return redirect(to='blog:deleted_articles')
+        return redirect('blog:deleted_articles')
 
 
-class DashboardArticleDetailView(LoginRequiredMixin, View):
+class DashboardArticleDetailView( View):
     """
        Displays article details.
     """
@@ -255,7 +170,7 @@ class DashboardArticleDetailView(LoginRequiredMixin, View):
         return render(request, template_name, context_object)
 
 
-class ArticlePublishView(LoginRequiredMixin, View):
+class ArticlePublishView( View):
     """
        View to publish a drafted article
     """
@@ -278,7 +193,7 @@ class ArticlePublishView(LoginRequiredMixin, View):
         return redirect('blog:dashboard_article_detail', slug=article.slug)
 
 
-class AuthorWrittenArticlesView(LoginRequiredMixin, View):
+class AuthorWrittenArticlesView( View):
     """
        Displays all articles written by an author.
     """
@@ -309,7 +224,7 @@ class AuthorWrittenArticlesView(LoginRequiredMixin, View):
         return render(request, template_name, context_object)
 
 
-class AuthorPublishedArticlesView(LoginRequiredMixin, View):
+class AuthorPublishedArticlesView( View):
     """
        Displays published articles by an author.
     """
@@ -341,7 +256,7 @@ class AuthorPublishedArticlesView(LoginRequiredMixin, View):
         return render(request, template_name, context_object)
 
 
-class AuthorDraftedArticlesView(LoginRequiredMixin, View):
+class AuthorDraftedArticlesView( View):
     """
        Displays drafted articles by an author.
     """
@@ -373,7 +288,7 @@ class AuthorDraftedArticlesView(LoginRequiredMixin, View):
         return render(request, template_name, context_object)
 
 
-class AuthorDeletedArticlesView(LoginRequiredMixin, View):
+class AuthorDeletedArticlesView( View):
     """
        Displays deleted articles by an author.
     """

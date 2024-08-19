@@ -64,7 +64,7 @@ urlpatterns = [
 
     # /home/
     path(
-        route='',
+        route='/home',
         view=ArticleListView.as_view(),
         name='home'
     ),
@@ -199,7 +199,7 @@ urlpatterns = [
 
     # /author/dashboard/
     path(
-        route="author/dashboard/home/",
+        route="",
         view=DashboardHomeView.as_view(),
         name="dashboard_home"
     ),

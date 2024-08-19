@@ -7,6 +7,7 @@ media/category_images
 media/profile_pics
 media/banner
 media/uploads/
+env/
 
 # Pycharm Files
 .idea
