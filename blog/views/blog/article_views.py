@@ -11,8 +11,8 @@ from django.views.generic import (
 )
 
 # Blog application imports.
-from blog.models.article_models import Article
-from blog.models.category_models import Category
+from blog.models.article_model import Article
+from blog.models.category_model import Category
 from blog.forms.blog.comment_forms import CommentForm
 
 

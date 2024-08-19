@@ -2,7 +2,7 @@
 from rest_framework import serializers
 
 # Local application imports
-from blog.models.article_models import Category
+from blog.models.article_model import Category
 
 
 class CategorySerializer(serializers.ModelSerializer):

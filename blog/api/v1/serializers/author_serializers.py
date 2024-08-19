@@ -2,7 +2,7 @@
 from rest_framework import serializers
 
 # Local application imports
-from blog.models.author_models import Profile
+from blog.models.author_model import Profile
 
 
 class AuthorProfile(serializers.ModelSerializer):

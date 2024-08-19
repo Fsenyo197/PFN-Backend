@@ -7,8 +7,8 @@ from django.views.generic import (
 )
 
 # Blog application imports.
-from blog.models.article_models import Article
-from blog.models.comment_models import Comment
+from blog.models.article_model import Article
+from blog.models.comment_model import Comment
 from blog.forms.blog.comment_forms import CommentForm
 
 

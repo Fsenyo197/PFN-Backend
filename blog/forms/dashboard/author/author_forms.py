@@ -3,7 +3,7 @@ from django import forms
 from django.contrib.auth.models import User
 
 # Blog app imports
-from blog.models.author_models import Profile
+from blog.models.author_model import Profile
 
 
 class UserUpdateForm(forms.ModelForm):
