@@ -1,38 +1,77 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.shortcuts import get_object_or_404, render, redirect
+from django.views.generic import View
+from blog.forms.dashboard.category_forms import CategoryCreateForm, CategoryUpdateForm
 from blog.models.category_model import Category
-from blog.services.category_service import CategoryService
-from blog.repositories.category_repository import CategoryRepository
 
-# Initialize the service with the repository
-category_service = CategoryService(repository=CategoryRepository())
 
-def category_list(request):
-    categories = category_service.get_all_categories()
-    return render(request, 'categories/category_list.html', {'categories': categories})
+class CategoryListView(View):
+    template_name = 'dashboard/category/category_list.html'
 
-def category_detail(request, category_id):
-    category = category_service.get_category_by_id(category_id)
-    if category is None:
-        return redirect('category_list')  # Handle not found
-    return render(request, 'categories/category_detail.html', {'category': category})
+    def get(self, request, *args, **kwargs):
+        categories = Category.objects.all()
+        context = {
+            'categories': categories
+        }
+        return render(request, self.template_name, context)
 
-def category_create(request):
-    if request.method == 'POST':
-        name = request.POST['name']
-        category_service.create_category(name)
-        return redirect('category_list')
-    return render(request, 'categories/category_form.html')
 
-def category_update(request, category_id):
-    category = category_service.get_category_by_id(category_id)
-    if category is None:
-        return redirect('category_list')  # Handle not found
-    if request.method == 'POST':
-        name = request.POST['name']
-        category_service.update_category(category_id, name)
-        return redirect('category_detail', category_id=category.id)
-    return render(request, 'categories/category_form.html', {'category': category})
+class CategoryCreateView(View):
+    template_name = 'dashboard/category/category_create_form.html'
 
-def category_delete(request, category_id):
-    category_service.delete_category(category_id)
-    return redirect('category_list')
+    def get(self, request, *args, **kwargs):
+        category_create_form = CategoryCreateForm()
+        context = {"category_create_form": category_create_form}
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        category_create_form = CategoryCreateForm(request.POST)
+
+        if category_create_form.is_valid():
+            category_create_form.save()
+            messages.success(request, "Category created successfully.")
+            return redirect("blog:category_list")
+        
+        context = {"category_create_form": category_create_form}
+        messages.error(request, "Please fill required fields")
+        return render(request, self.template_name, context)
+
+
+class CategoryUpdateView(View):
+    template_name = 'dashboard/category/category_update_form.html'
+
+    def get(self, request, *args, **kwargs):
+        category = get_object_or_404(Category, id=self.kwargs.get("id"))
+        category_update_form = CategoryUpdateForm(instance=category)
+        context = {"category_update_form": category_update_form, "category": category}
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        category = get_object_or_404(Category, id=self.kwargs.get("id"))
+        category_update_form = CategoryUpdateForm(request.POST, instance=category)
+
+        if category_update_form.is_valid():
+            category_update_form.save()
+            messages.success(request, "Category updated successfully.")
+            return redirect("blog:category_list")
+
+        context = {"category_update_form": category_update_form, "category": category}
+        messages.error(request, "Please fill required fields")
+        return render(request, self.template_name, context)
+
+
+class CategoryDeleteView(View):
+    def get(self, *args, **kwargs):
+        category = get_object_or_404(Category, id=self.kwargs.get("id"))
+        category.delete()
+        messages.success(self.request, "Category deleted successfully.")
+        return redirect('blog:category_list')
+
+
+class CategoryDetailView(View):
+    template_name = 'dashboard/category/category_detail.html'
+
+    def get(self, request, *args, **kwargs):
+        category = get_object_or_404(Category, id=self.kwargs.get("id"))
+        context = {'category': category}
+        return render(request, self.template_name, context)

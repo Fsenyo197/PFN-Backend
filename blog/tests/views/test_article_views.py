@@ -9,8 +9,8 @@ from django.urls import reverse
 from model_mommy import mommy
 
 # Blog application imports.
-from blog.models.article_models import Article
-from blog.models.category_models import Category
+from blog.models.article_model import Article
+from blog.models.category_model import Category
 
 
 class ArticleListViewTestCase(TestCase):

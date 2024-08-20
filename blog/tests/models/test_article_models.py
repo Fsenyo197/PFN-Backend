@@ -8,7 +8,7 @@ from django.utils.text import slugify
 from model_mommy import mommy
 
 # Blog application imports.
-from blog.models.article_models import Article
+from blog.models.article_model import Article
 
 
 class ArticleTestCase(TestCase):

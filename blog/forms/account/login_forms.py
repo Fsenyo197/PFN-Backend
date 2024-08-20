@@ -12,4 +12,4 @@ class UserLoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput(attrs={
             "name": "password",  "class": "input100",
             "placeholder": "Password"
-        }))
+        })) 

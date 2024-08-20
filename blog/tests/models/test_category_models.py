@@ -7,7 +7,7 @@ from django.utils.text import slugify
 from model_mommy import mommy
 
 # Blog application imports.
-from blog.models.category_models import Category
+from blog.models.category_model import Category
 
 
 class CategoryTestCase(TestCase):
