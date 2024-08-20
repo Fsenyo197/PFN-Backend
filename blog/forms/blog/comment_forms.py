@@ -2,7 +2,7 @@
 from django.forms import ModelForm, TextInput, EmailInput, Textarea
 
 # Blog application imports.
-from blog.models.comment_models import Comment
+from blog.models.comment_model import Comment
 
 
 class CommentForm(ModelForm):

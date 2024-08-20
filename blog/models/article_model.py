@@ -1,5 +1,4 @@
 # Core Django imports.
-from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -11,7 +10,7 @@ from ckeditor_uploader.fields import RichTextUploadingField
 
 # Blog application imports.
 from blog.utils.blog_utils import count_words, read_time
-from blog.models.category_models import Category
+from blog.models.category_model import Category
 
 
 class Article(models.Model):
@@ -27,23 +26,17 @@ class Article(models.Model):
     )
 
     # BLOG MODEL FIELDS
-    category = models.ForeignKey(Category, on_delete=models.CASCADE,
-                                 related_name='articles')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='articles')
     title = models.CharField(max_length=250, null=False, blank=False)
     slug = models.SlugField()
-    author = models.ForeignKey(User, on_delete=models.CASCADE,
-                               related_name='articles')
-    image = models.ImageField(default='article-default.jpg',
-                              upload_to='article_pics')
+    image = models.ImageField(default='article-default.jpg', upload_to='article_pics')
     image_credit = models.CharField(max_length=250, null=True, blank=True)
     body = RichTextUploadingField(blank=True)
     tags = TaggableManager(blank=True)
-    date_published = models.DateTimeField(null=True, blank=True,
-                                          default=timezone.now)
+    date_published = models.DateTimeField(null=True, blank=True, default=timezone.now)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES,
-                              default='DRAFT')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='DRAFT')
     views = models.PositiveIntegerField(default=0)
     count_words = models.CharField(max_length=50, default=0)
     read_time = models.CharField(max_length=50, default=0)
@@ -63,6 +56,4 @@ class Article(models.Model):
         super(Article, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse('blog:article_detail', kwargs={'username': self.author.username.lower(), 'slug': self.slug})
-
-
+        return reverse('blog:article_detail', kwargs={'slug': self.slug})

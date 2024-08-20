@@ -2,7 +2,7 @@
 from rest_framework import generics
 
 # Local application imports
-from blog.models.article_models import Category
+from blog.models.article_model import Category
 from ..serializers.category_serializers import CategorySerializer
 
 

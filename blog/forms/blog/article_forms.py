@@ -6,8 +6,8 @@ from django.forms import TextInput, Select, FileInput
 from ckeditor.widgets import CKEditorWidget
 
 # Blog app imports
-from blog.models.article_models import Article
-from blog.models.category_models import Category
+from blog.models.article_model import Article
+from blog.models.category_model import Category
 
 
 class ArticleCreateForm(forms.ModelForm):

@@ -2,7 +2,7 @@
 from rest_framework import generics
 
 # Blog app imports
-from blog.models.article_models import Article
+from blog.models.article_model import Article
 from ..serializers.article_serializers import ArticleSerializer
 
 

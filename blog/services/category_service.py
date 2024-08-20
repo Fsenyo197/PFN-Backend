@@ -1,6 +1,6 @@
 from typing import List, Optional
-from .category_model import Category
-from .category_repository import CategoryRepository
+from blog.models.category_model import Category
+from blog.repositories.category_repository import CategoryRepository
 
 class CategoryService:
     def __init__(self, repository: CategoryRepository):

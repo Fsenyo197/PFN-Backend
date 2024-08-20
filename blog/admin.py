@@ -2,10 +2,10 @@
 from django.contrib import admin
 
 # Blog application imports.
-from .models.article_model import Article
-from .models.category_model import Category
-from .models.comment_model import Comment
-from .models.author_model import Profile
+from blog.models.article_model import Article
+from blog.models.category_model import Category
+from blog.models.comment_model import Comment
+from blog.models.author_model import Profile
 
 
 class ProfileAdmin(admin.ModelAdmin):

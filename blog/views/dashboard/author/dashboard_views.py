@@ -6,22 +6,27 @@ from django.utils import timezone
 from django.views.generic import View
 
 from blog.forms.blog.article_forms import ArticleUpdateForm, ArticleCreateForm
-from blog.models.article_models import Article
+from blog.services.article_service import ArticleService
+from blog.repositories.article_repository import ArticleRepository
+from blog.models.article_model import Article
+
+
+# Initialize the ArticleService
+article_service = ArticleService(repository=ArticleRepository())
 
 
 class DashboardHomeView(View):
     template_name = 'dashboard/author/dashboard_home.html'
 
     def get(self, request, *args, **kwargs):
-        articles_list = Article.objects.all()  # No longer filtered by author
+        articles_list = article_service.get_all_articles()
 
         total_articles_written = len(articles_list)
-        total_articles_published = len(articles_list.filter(status=Article.PUBLISHED, deleted=False))
+        total_articles_published = len([article for article in articles_list if article.status == Article.PUBLISHED and not article.deleted])
         total_articles_views = sum(article.views for article in articles_list)
         total_articles_comments = sum(article.comments.count() for article in articles_list)
 
-        recent_published_articles_list = articles_list.filter(
-            status=Article.PUBLISHED, deleted=False).order_by("-date_published")[:5]
+        recent_published_articles_list = article_service.get_recent_published_articles(5)
 
         context = {
             'total_articles_written': total_articles_written,
@@ -54,11 +59,7 @@ class ArticleWriteView(View):
                 return render(request, self.template_name, context)
 
             if article_create_form.is_valid():
-                new_article = article_create_form.save(commit=False)
-                new_article.date_published = None
-                new_article.save()
-                article_create_form.save_m2m()
-
+                article_service.create_draft_article(article_create_form)
                 messages.success(request, "Article drafted successfully.")
                 return redirect("blog:drafted_articles")
 
@@ -73,10 +74,7 @@ class ArticleWriteView(View):
                 return render(request, self.template_name, context)
 
             if article_create_form.is_valid():
-                new_article = article_create_form.save(commit=False)
-                new_article.save()
-                article_create_form.save_m2m()
-
+                new_article = article_service.publish_article(article_create_form)
                 messages.success(request, "Article published successfully.")
                 return redirect("blog:dashboard_article_detail", slug=new_article.slug)
 
@@ -89,13 +87,13 @@ class ArticleUpdateView(View):
     template_name = 'dashboard/author/article_update_form.html'
 
     def get(self, request, *args, **kwargs):
-        old_article = get_object_or_404(Article, slug=self.kwargs.get("slug"))
+        old_article = article_service.get_article_by_slug(self.kwargs.get("slug"))
         article_update_form = ArticleUpdateForm(instance=old_article, initial={'tags': old_article.tags.names})
         context = {"article_update_form": article_update_form, "article": old_article}
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        old_article = get_object_or_404(Article, slug=self.kwargs.get("slug"))
+        old_article = article_service.get_article_by_slug(self.kwargs.get("slug"))
         article_update_form = ArticleUpdateForm(request.POST, request.FILES, instance=old_article)
         action = request.POST.get("action")
         article_status = request.POST["status"]
@@ -107,12 +105,7 @@ class ArticleUpdateView(View):
                 return render(request, self.template_name, context)
 
             if article_update_form.is_valid():
-                updated_article = article_update_form.save(commit=False)
-                updated_article.date_published = None
-                updated_article.date_updated = timezone.now()
-                updated_article.save()
-                article_update_form.save_m2m()
-
+                article_service.update_draft_article(article_update_form, old_article)
                 messages.success(request, "Article drafted successfully.")
                 return redirect("blog:drafted_articles")
 
@@ -127,12 +120,7 @@ class ArticleUpdateView(View):
                 return render(request, self.template_name, context)
 
             if article_update_form.is_valid():
-                updated_article = article_update_form.save(commit=False)
-                updated_article.date_published = timezone.now()
-                updated_article.date_updated = timezone.now()
-                updated_article.save()
-                article_update_form.save_m2m()
-
+                updated_article = article_service.publish_updated_article(article_update_form, old_article)
                 messages.success(request, "Article updated successfully.")
                 return redirect("blog:dashboard_article_detail", slug=updated_article.slug)
 
@@ -143,26 +131,17 @@ class ArticleUpdateView(View):
 
 class ArticleDeleteView(View):
     def get(self, *args, **kwargs):
-        article = get_object_or_404(Article, slug=self.kwargs.get("slug"))
-        article.deleted = True
-        article.save()
+        article_service.delete_article_by_slug(self.kwargs.get("slug"))
         messages.success(request=self.request, message="Article Deleted Successfully")
         return redirect('blog:deleted_articles')
 
 
-class DashboardArticleDetailView( View):
-    """
-       Displays article details.
-    """
-
+class DashboardArticleDetailView(View):
     def get(self, request, *args, **kwargs):
-        """
-           Returns article details.
-        """
         template_name = 'dashboard/author/dashboard_article_detail.html'
         context_object = {}
 
-        article = get_object_or_404(Article, slug=self.kwargs.get("slug"))
+        article = article_service.get_article_by_slug(self.kwargs.get("slug"))
 
         context_object['article_title'] = article.title
         context_object['article'] = article
@@ -170,47 +149,24 @@ class DashboardArticleDetailView( View):
         return render(request, template_name, context_object)
 
 
-class ArticlePublishView( View):
-    """
-       View to publish a drafted article
-    """
-
+class ArticlePublishView(View):
     def get(self, request, *args, **kwargs):
-        """
-            Gets article slug from user and gets the article from the
-            database.
-            It then sets the status to publish and date published to now and
-            then save the article and redirects the author to his/her published
-            articles.
-        """
-        article = get_object_or_404(Article, slug=self.kwargs.get('slug'))
-        article.status = Article.PUBLISHED
-        article.date_published = timezone.now()
-        article.date_updated = timezone.now()
-        article.save()
-
+        article_service.publish_article_by_slug(self.kwargs.get('slug'))
         messages.success(request, f"Article Published successfully.")
-        return redirect('blog:dashboard_article_detail', slug=article.slug)
+        return redirect('blog:dashboard_article_detail', slug=self.kwargs.get('slug'))
 
 
-class AuthorWrittenArticlesView( View):
-    """
-       Displays all articles written by an author.
-    """
-
+class AuthorWrittenArticlesView(View):
     def get(self, request):
-        """
-           Returns all articles written by an author.
-        """
         template_name = 'dashboard/author/author_written_article_list.html'
         context_object = {}
 
-        written_articles = Article.objects.filter(author=request.user.id, deleted=False).order_by('-date_created')
+        written_articles = article_service.get_written_articles_by_author(request.user.id)
         total_articles_written = len(written_articles)
 
         page = request.GET.get('page', 1)
-
         paginator = Paginator(written_articles, 5)
+
         try:
             written_articles_list = paginator.page(page)
         except PageNotAnInteger:
@@ -224,25 +180,17 @@ class AuthorWrittenArticlesView( View):
         return render(request, template_name, context_object)
 
 
-class AuthorPublishedArticlesView( View):
-    """
-       Displays published articles by an author.
-    """
-
+class AuthorPublishedArticlesView(View):
     def get(self, request):
-        """
-           Returns published articles by an author.
-        """
         template_name = 'dashboard/author/author_published_article_list.html'
         context_object = {}
 
-        published_articles = Article.objects.filter(author=request.user.id,
-                                                    status=Article.PUBLISHED, deleted=False).order_by('-date_published')
+        published_articles = article_service.get_published_articles_by_author(request.user.id)
         total_articles_published = len(published_articles)
 
         page = request.GET.get('page', 1)
-
         paginator = Paginator(published_articles, 5)
+
         try:
             published_articles_list = paginator.page(page)
         except PageNotAnInteger:
@@ -256,25 +204,17 @@ class AuthorPublishedArticlesView( View):
         return render(request, template_name, context_object)
 
 
-class AuthorDraftedArticlesView( View):
-    """
-       Displays drafted articles by an author.
-    """
-
+class AuthorDraftedArticlesView(View):
     def get(self, request):
-        """
-           Returns drafted articles by an author.
-        """
         template_name = 'dashboard/author/author_drafted_article_list.html'
         context_object = {}
 
-        drafted_articles = Article.objects.filter(author=request.user.id,
-                                                  status=Article.DRAFTED, deleted=False).order_by('-date_created')
+        drafted_articles = article_service.get_drafted_articles_by_author(request.user.id)
         total_articles_drafted = len(drafted_articles)
 
         page = request.GET.get('page', 1)
-
         paginator = Paginator(drafted_articles, 5)
+
         try:
             drafted_articles_list = paginator.page(page)
         except PageNotAnInteger:
@@ -288,25 +228,17 @@ class AuthorDraftedArticlesView( View):
         return render(request, template_name, context_object)
 
 
-class AuthorDeletedArticlesView( View):
-    """
-       Displays deleted articles by an author.
-    """
-
+class AuthorDeletedArticlesView(View):
     def get(self, request):
-        """
-           Returns deleted articles by an author.
-        """
         template_name = 'dashboard/author/author_deleted_article_list.html'
         context_object = {}
 
-        deleted_articles = Article.objects.filter(author=request.user.id,
-                                                  deleted=True).order_by('-date_published')
+        deleted_articles = article_service.get_deleted_articles_by_author(request.user.id)
         total_articles_deleted = len(deleted_articles)
 
         page = request.GET.get('page', 1)
-
         paginator = Paginator(deleted_articles, 5)
+
         try:
             deleted_articles_list = paginator.page(page)
         except PageNotAnInteger:
@@ -316,5 +248,3 @@ class AuthorDeletedArticlesView( View):
 
         context_object['deleted_articles_list'] = deleted_articles_list
         context_object['total_articles_deleted'] = total_articles_deleted
-
-        return render(request, template_name, context_object)
