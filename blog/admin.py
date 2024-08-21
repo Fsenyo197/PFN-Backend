@@ -4,8 +4,6 @@ from django.contrib import admin
 # Blog application imports.
 from blog.models.article_model import Article
 from blog.models.category_model import Category
-from blog.models.comment_model import Comment
-from blog.models.author_model import Profile
 
 
 class ProfileAdmin(admin.ModelAdmin):
@@ -14,13 +12,8 @@ class ProfileAdmin(admin.ModelAdmin):
     ordering = ['user', ]
 
 
-# Registers the author profile model at the admin backend.
-admin.site.register(Profile, ProfileAdmin)
-
-
 class CategoryAdmin(admin.ModelAdmin):
-
-    list_display = ('name', 'slug', 'image', 'approved')
+    list_display = ('name', 'slug', 'approved')
     list_filter = ('name', 'approved',)
     search_fields = ('name',)
     prepopulated_fields = {'slug': ('name',)}
@@ -32,13 +25,10 @@ admin.site.register(Category, CategoryAdmin)
 
 
 class ArticleAdmin(admin.ModelAdmin):
-
-    list_display = ('category', 'title', 'slug', 'author', 'image', 'image_credit',
-                    'body', 'date_published', 'status')
-    list_filter = ('status', 'date_created', 'date_published', 'author',)
+    list_display = ('category', 'title', 'slug', 'status')
+    list_filter = ('status', 'date_created', 'date_published',)
     search_fields = ('title', 'body',)
     prepopulated_fields = {'slug': ('title',)}
-    raw_id_fields = ('author',)
     date_hierarchy = 'date_published'
     ordering = ['status', '-date_created', ]
     readonly_fields = ('views', 'count_words', 'read_time')
@@ -46,17 +36,3 @@ class ArticleAdmin(admin.ModelAdmin):
 
 # Registers the article model at the admin backend.
 admin.site.register(Article, ArticleAdmin)
-
-
-class CommentAdmin(admin.ModelAdmin):
-
-    list_display = ('name', 'email', 'comment', 'article', 'date_created', )
-    list_filter = ('date_created', 'name',)
-    search_fields = ('name', 'article', 'comment')
-    date_hierarchy = 'date_created'
-    ordering = ['-date_created', ]
-    readonly_fields = ('name', 'email', 'comment', 'article', 'date_created', 'date_updated',)
-
-
-# Registers the comment model at the admin backend.
-admin.site.register(Comment, CommentAdmin)

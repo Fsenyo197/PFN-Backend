@@ -20,7 +20,3 @@ class Category(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name, allow_unicode=True)
         super(Category, self).save(*args, **kwargs)
-
-    def get_absolute_url(self):
-        return reverse('blog:category_articles',
-                       kwargs={'slug': self.slug})

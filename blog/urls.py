@@ -2,124 +2,36 @@
 from django.urls import path
 
 # Blog application imports.
-from blog.views.blog.article_views import (
-    ArticleListView,
-    ArticleDetailView,
-    ArticleSearchListView,
-    TagArticlesListView,
-)
-
-from blog.views.blog.category_views import (
-    CategoryArticlesListView,
-    CategoriesListView,
+from blog.views.dashboard.category_views import (
     CategoryCreateView,
-    CategoryUpdateCreateView,
+    CategoryUpdateView,  # Corrected Update View
+    CategoryDetailView,
+    CategoryDeleteView
 )
 
-from blog.views.blog.author_views import (
-    AuthorArticlesListView,
-    AuthorsListView,
-)
-
-from blog.views.blog.comment_views import (
-    CommentCreateView,
-    ArticleCommentList
+from blog.views.dashboard.article_views import (
+    ArticleWriteView,
+    ArticleUpdateView,
+    ArticleDeleteView,
+    ArticleDetailView,
+    ArticlePublishView,
 )
 
 from blog.views.dashboard.dashboard_views import (
     DashboardHomeView,
-    ArticleWriteView,
-    ArticleUpdateView,
-    ArticleDeleteView,
-    DashboardArticleDetailView,
-    ArticlePublishView,
-    AuthorWrittenArticlesView,
-    AuthorPublishedArticlesView,
-    AuthorDraftedArticlesView,
-    AuthorDeletedArticlesView,
+    TotalWrittenArticlesView,
+    TotalPublishedArticlesView,
+    TotalDraftedArticlesView,
+    TotalDeletedArticlesView,
 )
-
-from blog.views.account.register_view import \
-    (
-      ActivateView,
-      AccountActivationSentView,
-      UserRegisterView,
-    )
-from blog.views.account.logout_view import UserLogoutView
-from blog.views.account.login_view import UserLoginView
 
 
 # Specifies the app name for name spacing.
 app_name = "blog"
 
-# article/urls.py
 urlpatterns = [
 
-    # ARTICLE URLS #
-
-    # /home/
-    path(
-        route='/home',
-        view=ArticleListView.as_view(),
-        name='home'
-    ),
-
-    # /article/<str:slug>/
-    path(
-        route='@<str:username>/<str:slug>/',
-        view=ArticleDetailView.as_view(),
-        name='article_detail'
-
-    ),
-
-    # /search/?q=query/
-    path(
-        route='article/search/',
-        view=ArticleSearchListView.as_view(),
-        name='article_search_list_view'
-
-     ),
-
-    # /tag/<str:tag_name>/
-    path(
-        route='tag/<str:tag_name>/articles',
-        view=TagArticlesListView.as_view(),
-        name="tag_articles"
-    ),
-
-
-    # AUTHORS URLS #
-
-    # /authors-list/
-    path(
-        route='authors/list/',
-        view=AuthorsListView.as_view(),
-        name='authors_list'
-    ),
-
-    # /author/<str:username>/
-    path(
-        route='author/<str:username>/articles',
-        view=AuthorArticlesListView.as_view(),
-        name='author_articles'
-     ),
-
-
     # CATEGORY URLS #
-
-    # category-articles/<str:slug>/
-    path(
-        route='category/<str:slug>/articles',
-        view=CategoryArticlesListView.as_view(),
-        name='category_articles'
-    ),
-
-    # /categories-list/
-    path(
-        route='categories/list/',
-        view=CategoriesListView.as_view(),
-        name='categories_list'
-    ),
 
     # /category/new/
     path(
@@ -131,136 +43,96 @@ urlpatterns = [
     # /category/<str:slug>/update/
     path(
         route='category/<str:slug>/update/',
-        view=CategoryUpdateCreateView.as_view(),
+        view=CategoryUpdateView.as_view(),
         name="category_update"
     ),
 
-
-
-
-    # COMMENT URLS #
-
-    # /comment/new/
+    # /category/<int:id>/delete/
     path(
-        route='comment/new/<str:slug>/',
-        view=CommentCreateView.as_view(),
-        name="comment_create"
+        route='category/<int:id>/delete/',
+        view=CategoryDeleteView.as_view(),
+        name="category_delete"
     ),
 
-    # /<str:slug>/comments/
+    # /category/<int:id>/
     path(
-        route='<str:slug>/comments/',
-        view=ArticleCommentList.as_view(),
-        name="article_comments"
+        route='category/<int:id>/',
+        view=CategoryDetailView.as_view(),
+        name="category_detail"
     ),
 
 
-    # ACCOUNT URLS #
+    # ARTICLE URLS #
 
-    # account/login/
-    path(
-        route='account/login/',
-        view=UserLoginView.as_view(),
-        name='login'
-    ),
-
-    # account/login/
-    path(
-        route='account/register/',
-        view=UserRegisterView.as_view(),
-        name='register'
-    ),
-
-    # account/logout/
-    path(
-        route='account/logout/',
-        view=UserLogoutView.as_view(),
-        name='logout'
-    ),
-
-    path(route='account_activation_sent/',
-         view=AccountActivationSentView.as_view(),
-         name='account_activation_sent'
-         ),
-
-    path(route='activate/<uidb64>/<token>/',
-         view=ActivateView.as_view(),
-         name='activate'
-         ),
-
-
-
-    # DASHBOARD URLS #
-
-    # /author/dashboard/
-    path(
-        route="",
-        view=DashboardHomeView.as_view(),
-        name="dashboard_home"
-    ),
-
-    # me/article/write
+    # /me/article/write/
     path(
         route='me/article/write/',
         view=ArticleWriteView.as_view(),
         name="article_write"
     ),
 
-    # me/article/<str:slug>/update/
+    # /me/article/<str:slug>/update/
     path(
         route='me/article/<str:slug>/update/',
         view=ArticleUpdateView.as_view(),
         name="article_update"
     ),
 
-    # /article/<str:slug>/delete/
+    # /me/<str:slug>/
+    path(
+        route="me/<str:slug>/",
+        view=ArticleDetailView.as_view(),
+        name='dashboard_article_detail'
+    ),
+
+    # /me/article/<str:slug>/delete/
     path(
         route='me/article/<str:slug>/delete/',
         view=ArticleDeleteView.as_view(),
         name="article_delete"
     ),
 
-    # /me/<str:slug>/publish/
+    # /article/<str:slug>/publish/
     path(
         route="article/<str:slug>/publish/",
         view=ArticlePublishView.as_view(),
         name="publish_article"
     ),
 
+
+    # DASHBOARD URLS #
+
+    path(
+        route="",
+        view=DashboardHomeView.as_view(),
+        name="dashboard_home"
+    ),
+
     # /me/articles/written/
     path(
         route="me/articles/written/",
-        view=AuthorWrittenArticlesView.as_view(),
+        view=TotalWrittenArticlesView.as_view(),
         name="written_articles"
     ),
 
     # /me/articles/published/
     path(
         route="me/articles/published/",
-        view=AuthorPublishedArticlesView.as_view(),
+        view=TotalPublishedArticlesView.as_view(),
         name="published_articles"
     ),
 
-    # /me/articles/drafted/
+    # /me/articles/drafts/
     path(
         route="me/articles/drafts/",
-        view=AuthorDraftedArticlesView.as_view(),
+        view=TotalDraftedArticlesView.as_view(),
         name="drafted_articles"
     ),
 
     # /me/articles/deleted/
     path(
         route="me/articles/deleted/",
-        view=AuthorDeletedArticlesView.as_view(),
+        view=TotalDeletedArticlesView.as_view(),
         name="deleted_articles"
     ),
-
-    # /me/<str:slug>/
-    path(
-        route="me/<str:slug>/",
-        view=DashboardArticleDetailView.as_view(),
-        name='dashboard_article_detail'
-
-    ),
-
 ]

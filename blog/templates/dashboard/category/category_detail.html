@@ -1,0 +1,31 @@
+{% extends "dashboard/dashboard_base.html" %} {% block title %} Category
+Details{% endblock title %} {% block content %}
+<div class="container">
+  <div class="content-section">
+    <div class="card shadow-sm w-100">
+      <h4 class="card-header">{{ category.name }} Details</h4>
+      <div class="card-body">
+        <p><strong>Name:</strong> {{ category.name }}</p>
+        <p><strong>Description:</strong></p>
+        <div>{{ category.description|safe }}</div>
+
+        <div class="mt-4">
+          <a
+            href="{% url 'blog:category_update' category.id %}"
+            class="btn btn-primary"
+            >Edit</a
+          >
+          <a
+            href="{% url 'blog:category_delete' category.id %}"
+            class="btn btn-danger"
+            >Delete</a
+          >
+          <a href="{% url 'blog:category_list' %}" class="btn btn-secondary"
+            >Back to List</a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

@@ -1,33 +1,31 @@
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import  render
 from django.views.generic import View
-from blog.services.article_service import ArticleService
-from blog.repositories.article_repository import ArticleRepository
+from blog.services.dashboard_service import DashboardService
+from blog.repositories.dashboard_repository import DashboardRepository
 from blog.models.article_model import Article
 
 
-# Initialize the ArticleService
-article_service = ArticleService(repository=ArticleRepository())
+# Initialize the DashboardService
+dashboard_service = DashboardService(repository=DashboardRepository())
 
 
 class DashboardHomeView(View):
-    template_name = 'dashboard/author/dashboard_home.html'
+    template_name = 'dashboard/dashboard/dashboard_home.html'
 
     def get(self, request, *args, **kwargs):
-        articles_list = article_service.get_total_written_articles()  # Fetch all articles
+        articles_list = dashboard_service.get_total_written_articles()  # Fetch all articles
 
         total_articles_written = len(articles_list)
         total_articles_published = len([article for article in articles_list if article.status == Article.PUBLISHED and not article.deleted])
         total_articles_views = sum(article.views for article in articles_list)
-        total_articles_comments = sum(article.comments.count() for article in articles_list)
 
-        recent_published_articles_list = article_service.get_recent_published_articles(5)
+        recent_published_articles_list = dashboard_service.get_recent_published_articles(5)
 
         context = {
             'total_articles_written': total_articles_written,
             'total_articles_published': total_articles_published,
             'total_articles_views': total_articles_views,
-            'total_articles_comments': total_articles_comments,
             'recent_published_articles_list': recent_published_articles_list,
         }
 
@@ -37,10 +35,10 @@ class DashboardHomeView(View):
 
 class TotalWrittenArticlesView(View):
     def get(self, request):
-        template_name = 'dashboard/total_written_article_list.html'
+        template_name = 'dashboard/dashboard/total_written_article_list.html'
         context_object = {}
 
-        written_articles = article_service.get_total_written_articles(request)
+        written_articles = dashboard_service.get_total_written_articles(request)
         total_articles_written = len(written_articles)
 
         page = request.GET.get('page', 1)
@@ -61,10 +59,10 @@ class TotalWrittenArticlesView(View):
 
 class TotalPublishedArticlesView(View):
     def get(self, request):
-        template_name = 'dashboard/total_published_article_list.html'
+        template_name = 'dashboard/dashboard/total_published_article_list.html'
         context_object = {}
 
-        published_articles = article_service.get_total_published_articles(request)
+        published_articles = dashboard_service.get_total_published_articles(request)
         total_articles_published = len(published_articles)
 
         page = request.GET.get('page', 1)
@@ -85,10 +83,10 @@ class TotalPublishedArticlesView(View):
 
 class TotalDraftedArticlesView(View):
     def get(self, request):
-        template_name = 'dashboard/total_drafted_article_list.html'
+        template_name = 'dashboard/dashboard/total_drafted_article_list.html'
         context_object = {}
 
-        drafted_articles = article_service.get_total_drafted_articles(request)
+        drafted_articles = dashboard_service.get_total_drafted_articles(request)
         total_articles_drafted = len(drafted_articles)
 
         page = request.GET.get('page', 1)
@@ -109,10 +107,10 @@ class TotalDraftedArticlesView(View):
 
 class TotalDeletedArticlesView(View):
     def get(self, request):
-        template_name = 'dashboard/total_deleted_article_list.html'
+        template_name = 'dashboard/dashboard/total_deleted_article_list.html'
         context_object = {}
 
-        deleted_articles = article_service.get_total_deleted_articles(request)
+        deleted_articles = dashboard_service.get_total_deleted_articles(request)
         total_articles_deleted = len(deleted_articles)
 
         page = request.GET.get('page', 1)

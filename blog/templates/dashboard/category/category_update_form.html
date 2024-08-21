@@ -1,0 +1,20 @@
+{% extends "dashboard/dashboard_base.html" %} {% load crispy_forms_tags %} {%
+block title %} Update Category {% endblock title %} {% block content %}
+<div class="container">
+  <div class="content-section">
+    <div class="card shadow-sm w-100">
+      <h4 class="card-header">Update Category: {{ category.name }}</h4>
+      <div class="card-body">
+        <form method="POST">
+          {% csrf_token %} {{ form|crispy }}
+
+          <div class="form-group float-right">
+            <button type="reset" class="btn btn-danger">Reset</button>
+            <button class="btn btn-primary" type="submit">Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

@@ -13,7 +13,7 @@ article_service = ArticleService(repository=ArticleRepository())
 
 
 class ArticleWriteView(View):
-    template_name = 'article/article_create_form.html'
+    template_name = 'dashboard/article/article_create_form.html'
 
     def get(self, request, *args, **kwargs):
         article_create_form = ArticleCreateForm()
@@ -57,7 +57,7 @@ class ArticleWriteView(View):
 
 
 class ArticleUpdateView(View):
-    template_name = 'article/article_update_form.html'
+    template_name = 'dashboard/article/article_update_form.html'
 
     def get(self, request, *args, **kwargs):
         old_article = article_service.get_article_by_slug(self.kwargs.get("slug"))
@@ -104,7 +104,7 @@ class ArticleUpdateView(View):
 
 class ArticleDetailView(View):
     def get(self, request, *args, **kwargs):
-        template_name = 'article/article_detail.html'
+        template_name = 'dashboard/article/article_detail.html'
         context_object = {}
 
         article = article_service.get_article_by_slug(self.kwargs.get("slug"))

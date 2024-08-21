@@ -28,22 +28,24 @@ class Article(models.Model):
     # BLOG MODEL FIELDS
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='articles')
     title = models.CharField(max_length=250, null=False, blank=False)
-    slug = models.SlugField()
-    image = models.ImageField(default='article-default.jpg', upload_to='article_pics')
+    slug = models.SlugField(unique=True)
+    image = models.ImageField(upload_to='articles/', null=True, blank=True)
     image_credit = models.CharField(max_length=250, null=True, blank=True)
     body = RichTextUploadingField(blank=True)
     tags = TaggableManager(blank=True)
     date_published = models.DateTimeField(null=True, blank=True, default=timezone.now)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='DRAFT')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=DRAFTED)
     views = models.PositiveIntegerField(default=0)
-    count_words = models.CharField(max_length=50, default=0)
-    read_time = models.CharField(max_length=50, default=0)
+    count_words = models.PositiveIntegerField(default=0)
+    read_time = models.PositiveIntegerField(default=0)
     deleted = models.BooleanField(default=False)
 
     class Meta:
-        unique_together = ("title",)
+        constraints = [
+            models.UniqueConstraint(fields=['title'], name='unique_title')
+        ]
         ordering = ('-date_published',)
 
     def __str__(self):
@@ -54,6 +56,3 @@ class Article(models.Model):
         self.count_words = count_words(self.body)
         self.read_time = read_time(self.body)
         super(Article, self).save(*args, **kwargs)
-
-    def get_absolute_url(self):
-        return reverse('blog:article_detail', kwargs={'slug': self.slug})
