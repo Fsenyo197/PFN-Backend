@@ -4,9 +4,10 @@ from django.urls import path
 # Blog application imports.
 from blog.views.dashboard.category_views import (
     CategoryCreateView,
-    CategoryUpdateView,  # Corrected Update View
+    CategoryUpdateView,
     CategoryDetailView,
-    CategoryDeleteView
+    CategoryDeleteView,
+    CategoryListView,
 )
 
 from blog.views.dashboard.article_views import (
@@ -15,6 +16,7 @@ from blog.views.dashboard.article_views import (
     ArticleDeleteView,
     ArticleDetailView,
     ArticlePublishView,
+    ArticleListView,
 )
 
 from blog.views.dashboard.dashboard_views import (
@@ -42,7 +44,7 @@ urlpatterns = [
 
     # /category/<str:slug>/update/
     path(
-        route='category/<str:slug>/update/',
+        route='category/<int:id>/update/',
         view=CategoryUpdateView.as_view(),
         name="category_update"
     ),
@@ -61,8 +63,20 @@ urlpatterns = [
         name="category_detail"
     ),
 
+    path(
+        route='categories/',
+        view=CategoryListView.as_view(),
+        name="category_list"
+        ),
+
 
     # ARTICLE URLS #
+
+    path(
+        route='article/',
+        view=ArticleListView.as_view(),
+        name="article_list"
+        ),
 
     # /me/article/write/
     path(

@@ -12,8 +12,8 @@ class ArticleRepository(ArticleRepositoryInterface):
         except Article.DoesNotExist:
             return None
 
-    def create_article(self, title: str, content: str, author_id: int, category_id: int) -> Article:
-        article = Article(title=title, content=content, author_id=author_id, category_id=category_id)
+    def create_article(self, title: str, content: str, category_id: int) -> Article:
+        article = Article(title=title, content=content, category_id=category_id)
         article.save()
         return article
 

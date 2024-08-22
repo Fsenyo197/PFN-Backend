@@ -1,5 +1,8 @@
-{% extends "dashboard/dashboard_base.html" %} {% block title %} Category
-Details{% endblock title %} {% block content %}
+{% extends "dashboard/dashboard/dashboard_base.html" %}
+
+{% block title %} Category Details {% endblock title %}
+
+{% block content %}
 <div class="container">
   <div class="content-section">
     <div class="card shadow-sm w-100">
@@ -16,8 +19,9 @@ Details{% endblock title %} {% block content %}
             >Edit</a
           >
           <a
-            href="{% url 'blog:category_delete' category.id %}"
+            href="#"
             class="btn btn-danger"
+            onclick="confirmDeletion(`{% url 'blog:category_delete' category.id %}`)"
             >Delete</a
           >
           <a href="{% url 'blog:category_list' %}" class="btn btn-secondary"
@@ -28,4 +32,12 @@ Details{% endblock title %} {% block content %}
     </div>
   </div>
 </div>
+
+<script>
+  function confirmDeletion(url) {
+    if (confirm("Are you sure you want to delete this category? This action cannot be undone.")) {
+      window.location.href = url;
+    }
+  }
+</script>
 {% endblock content %}

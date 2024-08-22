@@ -119,7 +119,7 @@ class ArticleDeleteView(View):
     def get(self, *args, **kwargs):
         article_service.delete_article_by_slug(self.kwargs.get("slug"))
         messages.success(request=self.request, message="Article Deleted Successfully")
-        return redirect('blog:deleted_articles')
+        return redirect('blog:delete_article')
 
 
 class ArticlePublishView(View):
@@ -128,3 +128,13 @@ class ArticlePublishView(View):
         messages.success(request, f"Article Published successfully.")
         return redirect('blog:article_detail', slug=self.kwargs.get('slug'))
 
+
+class ArticleListView(View):
+    template_name = 'dashboard/article/article_list.html'
+
+    def get(self, request, *args, **kwargs):
+        articles = Article.objects.all()
+        context = {
+            'articles': articles
+        }
+        return render(request, self.template_name, context)

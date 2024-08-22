@@ -92,34 +92,6 @@ load only_hours %} {% block title %} Home {% endblock %} {% block stylesheets %}
         </div>
       </div>
     </div>
-    <div class="col-lg-3 col-md-6 col-sm-12">
-      <div class="widget">
-        <div class="widget-body">
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="state">
-              <h6>Comments</h6>
-              <h2>{{ total_articles_comments }}</h2>
-            </div>
-            <div class="icon">
-              <i class="ik ik-message-square"></i>
-            </div>
-          </div>
-          <small class="text-small mt-10 d-block"
-            >Total Comments For All Articles</small
-          >
-        </div>
-        <div class="progress progress-sm">
-          <div
-            class="progress-bar bg-info"
-            role="progressbar"
-            aria-valuenow="100"
-            aria-valuemin="0"
-            aria-valuemax="100"
-            style="width: 100%"
-          ></div>
-        </div>
-      </div>
-    </div>
   </div>
 
   <div class="page-header">
@@ -192,12 +164,6 @@ load only_hours %} {% block title %} Home {% endblock %} {% block stylesheets %}
                           <span class="comment"
                             >{{ article.views }} view{{ article.views|pluralize
                             }}</span
-                          >
-                          <span class="comment"
-                            ><a href="#"
-                              >{{ article.comments.count }} comment{{
-                              article.comments.count|pluralize }}</a
-                            ></span
                           >
                           <span class="time">
                             <i

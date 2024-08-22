@@ -9,9 +9,6 @@
         <meta name="keywords" content="Blogging, Blog, News">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!-- Favicon-->
-        <link rel="icon" href="{% static 'blog/images/favicon.png' %}" type="image/x-icon" />
-
 
      {% block stylesheets %}
         <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,600,700,800" rel="stylesheet">
@@ -77,11 +74,6 @@
                 <div class="app-sidebar colored">
                     <div class="sidebar-header">
                         <a class="header-brand" href="{% url 'blog:dashboard_home' %}">
-                            <div class="logo-img">
-                               <img src="{% static 'blog/images/favicon.png' %}" class="header-brand-img"
-                                    width="30" height="30"
-                                    alt="lavalite">
-                            </div>
                             <span class="text">Dashboard</span>
                         </a>
                         <button type="button" class="nav-toggle">
@@ -97,6 +89,14 @@
                                 <div class="nav-lavel">Home</div>
                                 <div class="nav-item">
                                     <a href="{% url 'blog:dashboard_home' %}"><i class="ik ik-home"></i><span>Home</span></a>
+                                </div>
+                                <div class="nav-lavel">Articles</div>
+                                <div class="nav-item">
+                                    <a href="{% url 'blog:article_list' %}"><i class="fa fa-newspaper"></i><span>Article List</span></a>
+                                </div>
+                                <div class="nav-lavel">Categories</div>
+                                <div class="nav-item">
+                                    <a href="{% url 'blog:category_list' %}"><i class="ik ik-list"></i><span>Category List</span></a>
                                 </div>
                             </nav>
                         </div>
@@ -176,7 +176,7 @@
     {% block scripts %}
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <script>
-            window.jQuery || document.write('<script src="{% static 'dashboard/author/src/js/vendor/jquery-3.3.1.min.js' %}"><\/script>')
+            window.jQuery || document.write(`<script src="{% static 'dashboard/author/src/js/vendor/jquery-3.3.1.min.js' %}"><\/script>`)
         </script>
         <script src="{% static 'dashboard/author/plugins/popper.js/dist/umd/popper.min.js' %}"></script>
         <script src="{% static 'dashboard/author/plugins/bootstrap/dist/js/bootstrap.min.js' %}"></script>

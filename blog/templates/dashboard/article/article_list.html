@@ -1,41 +1,41 @@
 {% extends "dashboard/dashboard/dashboard_base.html" %}
 
 {% block title %}
-    Categories
+    Articles
 {% endblock %}
 
 {% block content %}
 <div class="container">
   <div class="content-section">
     <div class="card shadow-sm w-100">
-      <h4 class="card-header">Categories</h4>
+      <h4 class="card-header">Articles</h4>
       <div class="card-body">
         <table class="table table-striped">
           <thead>
             <tr>
-              <th>Name</th>
+              <th>Title</th>
               <th>Description</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {% for category in categories %}
+            {% for article in articles %}
             <tr>
-              <td>{{ category.name }}</td>
-              <td>{{ category.description|truncatewords:15 }}</td>
+              <td>{{ article.title }}</td>
+              <td>{{ article.description|truncatewords:15 }}</td>
               <td>
                 <a
-                  href="{% url 'blog:category_detail' category.id %}"
+                  href="{% url 'blog:article_detail' article.id %}"
                   class="btn btn-info btn-sm"
                   >View</a
                 >
                 <a
-                  href="{% url 'blog:category_update' category.id %}"
+                  href="{% url 'blog:article_update' article.id %}"
                   class="btn btn-primary btn-sm"
                   >Edit</a
                 >
                 <a
-                  href="{% url 'blog:category_delete' category.id %}"
+                  href="{% url 'blog:article_delete' article.id %}"
                   class="btn btn-danger btn-sm"
                   >Delete</a
                 >
@@ -43,13 +43,13 @@
             </tr>
             {% empty %}
             <tr>
-              <td colspan="3">No categories found</td>
+              <td colspan="3">No articles found</td>
             </tr>
             {% endfor %}
           </tbody>
         </table>
-        <a href="{% url 'blog:category_create' %}" class="btn btn-success"
-          >Add New Category</a
+        <a href="{% url 'blog:article_create' %}" class="btn btn-success"
+          >Add New Article</a
         >
       </div>
     </div>
