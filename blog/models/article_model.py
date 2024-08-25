@@ -1,20 +1,25 @@
-# Core Django imports.
 from django.db import models
-from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
-
-# Third party app imports
 from taggit.managers import TaggableManager
 from ckeditor_uploader.fields import RichTextUploadingField
-
-# Blog application imports.
 from blog.utils.blog_utils import count_words, read_time
+
+# Import Category model
 from blog.models.category_model import Category
+
+# Custom Manager to handle soft deletion
+class ArticleManager(models.Manager):
+    def get_queryset(self):
+        # Override default to exclude 'deleted' articles
+        return super().get_queryset().filter(deleted=False)
+
+    def deleted(self):
+        # Custom queryset for retrieving only deleted articles
+        return super().get_queryset().filter(deleted=True)
 
 
 class Article(models.Model):
-
     # Article status constants
     DRAFTED = "DRAFTED"
     PUBLISHED = "PUBLISHED"
@@ -40,7 +45,14 @@ class Article(models.Model):
     views = models.PositiveIntegerField(default=0)
     count_words = models.PositiveIntegerField(default=0)
     read_time = models.PositiveIntegerField(default=0)
-    deleted = models.BooleanField(default=False)
+    deleted = models.BooleanField(default=False)  # Soft deletion flag
+
+    # SEO Fields
+    meta_description = models.CharField(max_length=160, blank=True, null=True)
+    meta_keywords = models.CharField(max_length=250, blank=True, null=True)
+
+    # Assigning custom manager
+    objects = ArticleManager()
 
     class Meta:
         constraints = [
@@ -52,7 +64,27 @@ class Article(models.Model):
         return self.title
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.title, allow_unicode=True)
-        self.count_words = count_words(self.body)
-        self.read_time = read_time(self.body)
+        # Ensure slug uniqueness by checking if a slug exists for a different article
+        if not self.slug:
+            self.slug = slugify(self.title, allow_unicode=True)
+            original_slug = self.slug
+            queryset = Article.objects.filter(slug=original_slug).exclude(pk=self.pk)
+            counter = 1
+            while queryset.exists():
+                self.slug = f'{original_slug}-{counter}'
+                counter += 1
+
+        # Handle empty body
+        self.count_words = count_words(self.body) if self.body else 0
+        self.read_time = read_time(self.body) if self.body else 0
         super(Article, self).save(*args, **kwargs)
+
+    def soft_delete(self):
+        """Soft delete the article by setting the deleted flag to True."""
+        self.deleted = True
+        self.save()
+
+    def restore(self):
+        """Restore a soft-deleted article by setting the deleted flag to False."""
+        self.deleted = False
+        self.save()

@@ -1,15 +1,9 @@
-# Third party imports.
 from rest_framework import serializers
-
-# Local application imports
 from blog.models.article_model import Article
-
 
 class ArticleSerializer(serializers.ModelSerializer):
     category = serializers.ReadOnlyField(source="category.name")
 
     class Meta:
         model = Article
-        fields = ('category', 'title', 'author', 'image', 'body',
-                  'date_published'
-                  )
+        fields = ('category', 'title', 'slug', 'image', 'body', 'date_published', 'meta_description', 'meta_keywords')

@@ -1,23 +1,19 @@
-# Third-party apps import
 from rest_framework import generics
-
-# Blog app imports
-from blog.models.article_model import Article
+from blog.api.v1.services.article_service import ArticleService
 from ..serializers.article_serializers import ArticleSerializer
 
-
 class ArticleList(generics.ListAPIView):
-    queryset = Article.objects.filter(status='PUBLISHED')
     serializer_class = ArticleSerializer
+    pagination_class = None
 
+    def get_queryset(self):
+        service = ArticleService()
+        return service.get_published_articles()
 
 class CategoryArticleList(generics.ListAPIView):
     serializer_class = ArticleSerializer
 
     def get_queryset(self):
         category_name = self.kwargs['category_name']
-        articles = Article.objects.filter(category__name=category_name,
-                                          status='PUBLISHED'
-                                          )
-        return articles
-
+        service = ArticleService()
+        return service.get_published_articles_by_category(category_name)

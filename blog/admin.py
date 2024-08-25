@@ -5,34 +5,26 @@ from django.contrib import admin
 from blog.models.article_model import Article
 from blog.models.category_model import Category
 
-
-class ProfileAdmin(admin.ModelAdmin):
-    list_filter = ('user',)
-    search_fields = ('user',)
-    ordering = ['user', ]
-
-
+@admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
+    """
+    Admin panel configuration for Category model.
+    """
     list_display = ('name', 'slug', 'approved')
-    list_filter = ('name', 'approved',)
+    list_filter = ('approved',)
     search_fields = ('name',)
     prepopulated_fields = {'slug': ('name',)}
-    ordering = ['name', ]
+    ordering = ['name']
 
-
-# Registers the category model at the admin backend.
-admin.site.register(Category, CategoryAdmin)
-
-
+@admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
+    """
+    Admin panel configuration for Article model.
+    """
     list_display = ('category', 'title', 'slug', 'status')
     list_filter = ('status', 'date_created', 'date_published',)
     search_fields = ('title', 'body',)
     prepopulated_fields = {'slug': ('title',)}
     date_hierarchy = 'date_published'
-    ordering = ['status', '-date_created', ]
+    ordering = ['status', '-date_created']
     readonly_fields = ('views', 'count_words', 'read_time')
-
-
-# Registers the article model at the admin backend.
-admin.site.register(Article, ArticleAdmin)

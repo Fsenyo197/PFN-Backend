@@ -24,8 +24,7 @@ from django.urls import include, path
 
 urlpatterns = [
     path('ckeditor/', include('ckeditor_uploader.urls')),
-    path('', include('blog.urls', namespace='blog')),  # Urls for article app.
-    path('api/v1/article/', include('blog.api.v1.routers.routers')), # Urls for API.
+    path('api/v1/', include('blog.api.v1.routers.routers')),
     path('admin/', admin.site.urls),
 
     # Url for password reset.
