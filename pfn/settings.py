@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import environ
+
+# Initialise environment variables
+env = environ.Env()
+environ.Env.read_env()  # Reading .env file
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,18 +25,17 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'h((g0d1e)y#zn%d!2wt_ow5otovu5nd#lv7v#_h_o&(m$vtbzc'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool('DEBUG', default=False)
 
-ALLOWED_HOSTS = ['*', ]
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
 INSTALLED_APPS = [
-
     # Default Django Apps.
     'django.contrib.admin',
     'django.contrib.auth',
@@ -52,12 +56,7 @@ INSTALLED_APPS = [
 
     # My apps.
     'blog.apps.BlogConfig',
-    #'blog',
-    #'pfn',
-
- ]
-
-INTERNAL_IPS = ['127.0.0.1', '::1']
+]
 
 MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
@@ -95,14 +94,7 @@ WSGI_APPLICATION = 'pfn.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "PFN",
-        "USER": "PFN_user",
-        "PASSWORD": "pwd_PFN",
-        "HOST": "127.0.0.1",
-        "PORT": "3306",
-    }
+    'default': env.db(),  # Reads DATABASE_URL from environment variables
 }
 
 
@@ -159,11 +151,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Specifies the CSS Framework Crispy Forms should use.
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-# Account Settings
-LOGIN_URL = '/account/login/'
-LOGIN_REDIRECT_URL = '/author/dashboard/'
-LOGOUT_REDIRECT_URL = '/account/logout/'
-
 # Email Settings (Development)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -181,12 +168,12 @@ CKEDITOR_UPLOAD_PATH = 'uploads/'
 CKEDITOR_IMAGE_BACKEND = "pillow"
 
 CKEDITOR_CONFIGS = {
-    'default':
-        {'toolbar': 'full',
-         'width': 'auto',
-         'extraPlugins': ','.join([
-             'codesnippet',
-             'youtube'
-         ]),
-         },
+    'default': {
+        'toolbar': 'full',
+        'width': 'auto',
+        'extraPlugins': ','.join([
+            'codesnippet',
+            'youtube'
+        ]),
+    },
 }
