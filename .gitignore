@@ -9,6 +9,7 @@ media/banner
 media/uploads/
 myenv/
 env/
+venv/
 .env
 
 # Pycharm Files
