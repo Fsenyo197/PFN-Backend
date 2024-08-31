@@ -1,9 +1,10 @@
 from django import forms
+from tinymce.widgets import TinyMCE
 from blog.models.category_model import Category
-from ckeditor.widgets import CKEditorWidget
+
 
 class CategoryCreateForm(forms.ModelForm):
-    description = forms.CharField(widget=CKEditorWidget(config_name='default', attrs={
+    description = forms.CharField(widget=TinyMCE(attrs={
         'class': 'form-control',
         'id': 'categoryDescription',
         'name': 'category_description',
@@ -20,8 +21,9 @@ class CategoryCreateForm(forms.ModelForm):
             })
         }
 
+
 class CategoryUpdateForm(forms.ModelForm):
-    description = forms.CharField(widget=CKEditorWidget(config_name='default', attrs={
+    description = forms.CharField(widget=TinyMCE(attrs={
         'class': 'form-control',
         'id': 'categoryDescription',
         'name': 'category_description',

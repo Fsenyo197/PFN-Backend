@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 from taggit.managers import TaggableManager
-from ckeditor_uploader.fields import RichTextUploadingField
+from tinymce.models import HTMLField
 from blog.utils.blog_utils import count_words, read_time
 
 # Import Category model
@@ -36,7 +36,7 @@ class Article(models.Model):
     slug = models.SlugField(unique=True)
     image = models.ImageField(upload_to='articles/', null=True, blank=True)
     image_credit = models.CharField(max_length=250, null=True, blank=True)
-    body = RichTextUploadingField(blank=True)
+    body = HTMLField(blank=True) 
     tags = TaggableManager(blank=True)
     date_published = models.DateTimeField(null=True, blank=True, default=timezone.now)
     date_created = models.DateTimeField(auto_now_add=True)

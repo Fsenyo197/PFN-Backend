@@ -49,10 +49,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'taggit',
     'debug_toolbar',
-    'ckeditor',
-    'ckeditor_uploader',
     'crispy_forms',
     'crispy_bootstrap4',
+    'tinymce',
 
     # My apps.
     'blog.apps.BlogConfig',
@@ -163,17 +162,34 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # EMAIL_PORT = 587 
 # EMAIL_USE_TLS = True
 
-# CKEditor Settings
-CKEDITOR_UPLOAD_PATH = 'uploads/'
-CKEDITOR_IMAGE_BACKEND = "pillow"
-
-CKEDITOR_CONFIGS = {
-    'default': {
-        'toolbar': 'full',
-        'width': 'auto',
-        'extraPlugins': ','.join([
-            'codesnippet',
-            'youtube'
-        ]),
-    },
+# TinyMCE Settings
+TINYMCE_DEFAULT_CONFIG = {
+    'height': 500,
+    'width': 900,
+    'cleanup_on_startup': True,
+    'custom_undo_redo_levels': 20,
+    'selector': 'textarea',
+    'theme': 'silver', 
+    'plugins': '''
+        textcolor save link image media preview codesample contextmenu
+        table code lists fullscreen  insertdatetime  nonbreaking
+        contextmenu directionality searchreplace wordcount visualblocks
+        visualchars code fullscreen autolink lists  charmap print  hr
+        anchor pagebreak
+    ''',
+    'toolbar1': '''
+        fullscreen preview bold italic underline | fontselect,
+        fontsizeselect  | forecolor backcolor | alignleft alignright |
+        aligncenter alignjustify | indent outdent | bullist numlist table |
+        link image media | codesample |
+    ''',
+    'toolbar2': '''
+        visualblocks visualchars |
+        charmap hr pagebreak nonbreaking anchor | code |
+    ''',
+    'contextmenu': 'formats | link image',
+    'menubar': True,
+    'statusbar': True,
 }
+
+

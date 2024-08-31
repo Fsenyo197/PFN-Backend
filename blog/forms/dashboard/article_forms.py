@@ -1,11 +1,7 @@
-# Django imports
 from django import forms
 from django.forms import TextInput, Select, FileInput
+from tinymce.widgets import TinyMCE 
 
-# Third-party app imports
-from ckeditor.widgets import CKEditorWidget
-
-# Blog app imports
 from blog.models.article_model import Article
 from blog.models.category_model import Category
 
@@ -26,7 +22,6 @@ class ArticleCreateForm(forms.ModelForm):
                                     )
 
     class Meta:
-
         # Article status constants
         DRAFTED = "DRAFTED"
         PUBLISHED = "PUBLISHED"
@@ -63,7 +58,7 @@ class ArticleCreateForm(forms.ModelForm):
                 'id': "image_credit"
             }),
 
-            'body': forms.CharField(widget=CKEditorWidget(config_name="default", attrs={
+            'body': forms.CharField(widget=TinyMCE(attrs={
                        "rows": 5, "cols": 20,
                        'id': 'content',
                        'name': "article_content",
@@ -144,7 +139,7 @@ class ArticleUpdateForm(forms.ModelForm):
                                  "title": "Select Status"
                              }
                              ),
-            'body': forms.CharField(widget=CKEditorWidget(config_name="default", attrs={
+            'body': forms.CharField(widget=TinyMCE(attrs={
                        "rows": 5, "cols": 20,
                        'id': 'content',
                        'name': "article_content",
@@ -159,5 +154,4 @@ class ArticleUpdateForm(forms.ModelForm):
             }
 
             ),
-
         }
