@@ -15,7 +15,6 @@ Including another URLconf
 """
 
 # Core Django imports
-from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -25,43 +24,6 @@ from django.urls import include, path
 urlpatterns = [
     path('api/v1/', include('blog.api.v1.routers.routers')),
     path('admin/', admin.site.urls),
-
-    # Url for password reset.
-    path('account/password-reset/',
-         auth_views.PasswordResetView.as_view(
-             template_name='account/password_reset.html'),
-         name='password_reset'),
-
-    # Url for successful password reset.
-    path('account/password-reset/done/',
-         auth_views.PasswordResetDoneView.as_view(
-             template_name='account/password_reset_done.html'),
-         name='password_reset_done'),
-
-    # Url for successful password reset confirm.
-    path('account/password-reset-confirm/<uidb64>/<token>/',
-         auth_views.PasswordResetConfirmView.as_view(
-             template_name='account/password_reset_confirm.html'),
-         name='password_reset_confirm'),
-
-    # Url for password reset done.
-    path('account/password-reset-complete/',
-         auth_views.PasswordResetCompleteView.as_view(
-             template_name='account/password_reset_complete.html'),
-         name='password_reset_complete'),
-
-
-    path('account/login/',
-         auth_views.PasswordResetCompleteView.as_view(
-             template_name='account/login.html'),
-         name='login'),
-
-
-     path('account/logout/',
-         auth_views.PasswordResetCompleteView.as_view(
-             template_name='account/logout.html'),
-         name='logout'),
-
 ]
 
 
@@ -78,4 +40,3 @@ if settings.DEBUG:
 admin.site.site_header = "PFN Admin"
 admin.site.site_title = "PFN Admin Portal"
 admin.site.index_title = "Welcome to Prop Firm News Portal"
-
