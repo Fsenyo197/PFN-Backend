@@ -30,7 +30,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG', default=False)
 
-ALLOWED_HOSTS = ['https://pfn-1b88e7ae7666.herokuapp.com/']
+ALLOWED_HOSTS = ['https://pfn-frontend-prli35rjl-senyos-projects-f8c5d909.vercel.app/']
 
 
 # Application definition
