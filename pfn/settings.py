@@ -199,5 +199,6 @@ TINYMCE_DEFAULT_CONFIG = {
 # CORS Configuration
 CORS_ALLOW_ALL_ORIGINS = False  # Optionally, set this to True for development
 CORS_ALLOWED_ORIGINS = [
-    'https://pfn-frontend-prli35rjl-senyos-projects-f8c5d909.vercel.app',
+    'https://pfn-frontend-prli35rjl-senyos-projects-f8c5d909.vercel.app', 
+    'https://pfn-frontend.vercel.app',
 ]
