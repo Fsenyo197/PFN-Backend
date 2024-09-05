@@ -1,4 +1,4 @@
-"""bona_blog URL Configuration
+"""PFN URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.1/topics/http/urls/
@@ -15,26 +15,13 @@ Including another URLconf
 """
 
 # Core Django imports
-from django.conf import settings
-from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
-
 
 urlpatterns = [
     path('api/v1/', include('blog.api.v1.routers.routers')),
     path('admin/', admin.site.urls),
 ]
-
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-    import debug_toolbar
-    urlpatterns = [
-                      path('__debug__/', include(debug_toolbar.urls)),
-                  ] + urlpatterns
-
 
 # Modifies default django admin titles and headers with custom app detail.
 admin.site.site_header = "PFN Admin"
