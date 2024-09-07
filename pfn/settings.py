@@ -13,6 +13,11 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os
 import environ
 
+# Media files (User uploaded images) using Cloudinary
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api	
+
 # Initialise environment variables
 env = environ.Env()
 environ.Env.read_env()  # Reading .env file
@@ -149,9 +154,12 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 
-# Media files (User uploaded images) using Cloudinary
-CLOUDINARY_URL = env('CLOUDINARY_URL')
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+cloudinary.config( 
+    cloud_name = env('CLOUDINARY_CLOUD_NAME'),
+    api_key = env('CLOUDINARY_API_KEY'),
+    api_secret = env('CLOUDINARY_API_SECRET')
+)
+
 
 # Specifies the CSS Framework Crispy Forms should use.
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
