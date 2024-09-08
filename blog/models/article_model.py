@@ -32,7 +32,7 @@ class Article(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='articles')
     title = models.CharField(max_length=250, null=False, blank=False)
     slug = models.SlugField(unique=True)
-    image = models.URLField(max_length=200, null=True, blank=True)  # Use URLField for Cloudinary URLs
+    image = models.ImageField(null=True, blank=True)
     image_credit = models.CharField(max_length=250, null=True, blank=True)
     body = HTMLField(blank=True)
     tags = TaggableManager(blank=True)
@@ -74,8 +74,8 @@ class Article(models.Model):
 
         # Upload image to Cloudinary if a new image is provided
         if self.image and not self._state.adding:  # Check if image is provided and not a new object
-            upload_response = cloudinary.uploader.upload(self.image, secure=True)
-            self.image = upload_response.get('secure_url')  # This will return the HTTPS URL        
+            upload_response = cloudinary.uploader.upload(self.image)
+            self.image = upload_response.get('secure_url')  # Save the Cloudinary URL
 
         # Handle empty body
         self.count_words = count_words(self.body) if self.body else 0
