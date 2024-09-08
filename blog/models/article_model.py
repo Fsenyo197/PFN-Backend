@@ -35,7 +35,8 @@ class Article(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='articles')
     title = models.CharField(max_length=250, null=False, blank=False)
     slug = models.SlugField(unique=True)
-    image = models.CharField(max_length=255, null=True, blank=True)  # Changed to CharField for storing public_id
+    image = models.ImageField(null=True, blank=True)  # Allows image upload
+    image_public_id = models.CharField(max_length=255, null=True, blank=True)  # Stores Cloudinary public_id
     image_credit = models.CharField(max_length=250, null=True, blank=True)
     body = HTMLField(blank=True)
     tags = TaggableManager(blank=True)
@@ -76,9 +77,9 @@ class Article(models.Model):
                 counter += 1
 
         # Upload image to Cloudinary if a new image is provided
-        if self.image and not self._state.adding:  # Check if image is provided and not a new object
+        if self.image and not self._state.adding:  # Check if an image is provided and not a new object
             upload_response = cloudinary.uploader.upload(self.image.path)
-            self.image = upload_response.get('public_id')  # Save the Cloudinary public_id
+            self.image_public_id = upload_response.get('public_id')  # Save the Cloudinary public_id
 
         # Handle empty body
         self.count_words = count_words(self.body) if self.body else 0
