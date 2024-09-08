@@ -4,9 +4,11 @@ from django.utils.text import slugify
 from taggit.managers import TaggableManager
 from tinymce.models import HTMLField
 from blog.utils.blog_utils import count_words, read_time
+import cloudinary.uploader
 
 # Import Category model
 from blog.models.category_model import Category
+
 
 # Custom Manager to handle soft deletion
 class ArticleManager(models.Manager):
@@ -36,7 +38,7 @@ class Article(models.Model):
     slug = models.SlugField(unique=True)
     image = models.ImageField(upload_to='articles/', null=True, blank=True)
     image_credit = models.CharField(max_length=250, null=True, blank=True)
-    body = HTMLField(blank=True) 
+    body = HTMLField(blank=True)
     tags = TaggableManager(blank=True)
     date_published = models.DateTimeField(null=True, blank=True, default=timezone.now)
     date_created = models.DateTimeField(auto_now_add=True)
@@ -74,9 +76,22 @@ class Article(models.Model):
                 self.slug = f'{original_slug}-{counter}'
                 counter += 1
 
+        # Upload the image to Cloudinary if present
+        if self.image:
+            upload_response = cloudinary.uploader.upload(self.image)
+            self.image = upload_response.get('url')
+
         # Handle empty body
         self.count_words = count_words(self.body) if self.body else 0
         self.read_time = read_time(self.body) if self.body else 0
+
+        # Fallback for meta description and keywords
+        if not self.meta_description:
+            self.meta_description = self.body[:150]  # First 150 characters of the body
+
+        if not self.meta_keywords:
+            self.meta_keywords = ','.join([tag.name for tag in self.tags.all()])  # Use article tags as keywords
+
         super(Article, self).save(*args, **kwargs)
 
     def soft_delete(self):
