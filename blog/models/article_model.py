@@ -6,6 +6,7 @@ from tinymce.models import HTMLField
 from blog.utils.blog_utils import count_words, read_time
 from blog.models.category_model import Category
 import cloudinary.uploader
+from django.core.files.storage import default_storage
 import environ
 
 # Initialize environment variables
@@ -76,10 +77,20 @@ class Article(models.Model):
                 self.slug = f'{original_slug}-{counter}'
                 counter += 1
 
-        # Upload image to Cloudinary if a new image is provided
-        if self.image and not self._state.adding:  # Check if an image is provided and not a new object
-            upload_response = cloudinary.uploader.upload(self.image.path)
-            self.image_public_id = upload_response.get('public_id')  # Save the Cloudinary public_id
+        # Save the instance first to ensure the image file is available in self.image.path
+        super(Article, self).save(*args, **kwargs)
+
+        # Upload to Cloudinary only if a new image is provided and no public_id exists
+        if self.image and not self.image_public_id:
+            if hasattr(self.image, 'path'):
+                upload_response = cloudinary.uploader.upload(self.image.path)
+                self.image_public_id = upload_response.get('public_id')
+
+                # Optionally, delete the local file after uploading to Cloudinary
+                default_storage.delete(self.image.path)
+
+                # Save the model again to store the Cloudinary public_id
+                super(Article, self).save(*args, **kwargs)
 
         # Handle empty body
         self.count_words = count_words(self.body) if self.body else 0
