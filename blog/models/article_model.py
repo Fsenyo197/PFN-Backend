@@ -6,6 +6,8 @@ from tinymce.models import HTMLField
 from blog.utils.blog_utils import count_words, read_time
 from blog.models.category_model import Category
 import cloudinary.uploader
+import cloudinary.api
+from urllib.parse import urlparse
 import environ
 
 # Initialize environment variables
@@ -35,7 +37,7 @@ class Article(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='articles')
     title = models.CharField(max_length=250, null=False, blank=False)
     slug = models.SlugField(unique=True)
-    image = models.ImageField(null=True, blank=True)  # Removed `upload_to='articles/'`
+    image = models.ImageField(null=True, blank=True)
     image_credit = models.CharField(max_length=250, null=True, blank=True)
     body = HTMLField(blank=True)
     tags = TaggableManager(blank=True)
@@ -76,11 +78,20 @@ class Article(models.Model):
                 counter += 1
 
         # Upload image to Cloudinary if a new image is provided
-        if self.image and self._state.adding:  # Upload image when creating a new instance
+        if self.image and not self._state.adding:  # Check if image is provided and not a new object
             upload_response = cloudinary.uploader.upload(self.image)
-            self.image = upload_response.get('secure_url')
+            self.image = upload_response.get('secure_url')  # Save the Cloudinary URL
 
-        # Handle word count and read time
+        # Extract Cloudinary URL from combined URL if needed
+        if self.image:
+            heroku_url = env('HEROKU_APP_URL')  # Load Heroku app URL from environment variable
+            parsed_url = urlparse(self.image.url)
+            if parsed_url.netloc == heroku_url:
+                # Assuming the Cloudinary URL is always after the host URL
+                cloudinary_url = parsed_url.path.lstrip('/')
+                self.image = f'https://{cloudinary_url}'  # Constructing full Cloudinary URL
+
+        # Handle empty body
         self.count_words = count_words(self.body) if self.body else 0
         self.read_time = read_time(self.body) if self.body else 0
 
