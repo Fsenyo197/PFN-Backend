@@ -16,7 +16,7 @@ import environ
 # Media files (User uploaded images) using Cloudinary
 import cloudinary
 import cloudinary.uploader
-import cloudinary.api	
+import cloudinary.api
 
 # Initialise environment variables
 env = environ.Env()
@@ -24,7 +24,6 @@ environ.Env.read_env()  # Reading .env file
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -36,7 +35,6 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = env.bool('DEBUG', default=False)
 
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 
@@ -57,8 +55,9 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap4',
     'tinymce',
+    'corsheaders',  # Added for handling CORS
 
-     # Cloudinary
+    # Cloudinary
     'cloudinary',
     'cloudinary_storage',
 
@@ -69,6 +68,8 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',  # Added for serving static files
+    'corsheaders.middleware.CorsMiddleware',  # Added for CORS
+    'django.middleware.common.CommonMiddleware',  # Required for CORS
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -159,7 +160,6 @@ cloudinary.config(
     api_key = env('CLOUDINARY_API_KEY'),
     api_secret = env('CLOUDINARY_API_SECRET')
 )
-
 
 # Specifies the CSS Framework Crispy Forms should use.
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
