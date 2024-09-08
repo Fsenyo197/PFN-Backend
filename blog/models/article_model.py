@@ -75,7 +75,18 @@ class Article(models.Model):
         # Upload image to Cloudinary if a new image is provided
         if self.image and not self._state.adding:  # Check if image is provided and not a new object
             upload_response = cloudinary.uploader.upload(self.image)
-            self.image = upload_response.get('secure_url')  # Save the Cloudinary URL
+            image_url = upload_response.get('secure_url')  # Save the Cloudinary URL
+
+            # Apply hardcoded fix: replace first 3 characters before '/res' with ':/'
+            if image_url and "/res" in image_url:
+                index = image_url.index('/res')
+                # Replace the 3 characters before '/res' with ':/'
+                fixed_url = image_url[:index-3] + ":/" + image_url[index:]
+                self.image = fixed_url
+            else:
+                self.image = image_url  # fallback to the original URL
+        else:
+            self.image = None  # Handle cases where image might be null
 
         # Handle empty body
         self.count_words = count_words(self.body) if self.body else 0
