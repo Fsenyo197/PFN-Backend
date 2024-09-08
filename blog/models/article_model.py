@@ -4,13 +4,10 @@ from django.utils.text import slugify
 from taggit.managers import TaggableManager
 from tinymce.models import HTMLField
 from blog.utils.blog_utils import count_words, read_time
-import cloudinary.uploader
-
-# Import Category model
 from blog.models.category_model import Category
+import cloudinary.uploader
+import cloudinary.api
 
-
-# Custom Manager to handle soft deletion
 class ArticleManager(models.Manager):
     def get_queryset(self):
         # Override default to exclude 'deleted' articles
@@ -19,7 +16,6 @@ class ArticleManager(models.Manager):
     def deleted(self):
         # Custom queryset for retrieving only deleted articles
         return super().get_queryset().filter(deleted=True)
-
 
 class Article(models.Model):
     # Article status constants
@@ -36,7 +32,7 @@ class Article(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='articles')
     title = models.CharField(max_length=250, null=False, blank=False)
     slug = models.SlugField(unique=True)
-    image = models.ImageField(upload_to='articles/', null=True, blank=True)
+    image = models.URLField(max_length=200, null=True, blank=True)  # Use URLField for Cloudinary URLs
     image_credit = models.CharField(max_length=250, null=True, blank=True)
     body = HTMLField(blank=True)
     tags = TaggableManager(blank=True)
@@ -76,21 +72,14 @@ class Article(models.Model):
                 self.slug = f'{original_slug}-{counter}'
                 counter += 1
 
-        # Upload the image to Cloudinary if present
-        if self.image:
+        # Upload image to Cloudinary if a new image is provided
+        if self.image and not self._state.adding:  # Check if image is provided and not a new object
             upload_response = cloudinary.uploader.upload(self.image)
-            self.image = upload_response.get('url')
+            self.image = upload_response.get('secure_url')  # Save the Cloudinary URL
 
         # Handle empty body
         self.count_words = count_words(self.body) if self.body else 0
         self.read_time = read_time(self.body) if self.body else 0
-
-        # Fallback for meta description and keywords
-        if not self.meta_description:
-            self.meta_description = self.body[:150]  # First 150 characters of the body
-
-        if not self.meta_keywords:
-            self.meta_keywords = ','.join([tag.name for tag in self.tags.all()])  # Use article tags as keywords
 
         super(Article, self).save(*args, **kwargs)
 
