@@ -75,7 +75,7 @@ class Article(models.Model):
         # Upload image to Cloudinary if a new image is provided
         if self.image and not self._state.adding:  # Check if image is provided and not a new object
             upload_response = cloudinary.uploader.upload(self.image)
-            self.image = upload_response.get('url')
+            self.image = upload_response.get('secure_url')  # Save the Cloudinary URL
 
         # Handle empty body
         self.count_words = count_words(self.body) if self.body else 0

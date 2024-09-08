@@ -11,6 +11,14 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     def get_image(self, obj):
         if obj.image:
-            # Return only the Cloudinary URL (host URL included)
-            return obj.image.url if hasattr(obj.image, 'url') else obj.image
+            image_url = obj.image
+
+            # Apply hardcoded fix: replace the first 3 characters before '/res' with ':/'
+            if "/res" in image_url:
+                index = image_url.index('/res')
+                fixed_url = image_url[:index-3] + ":/" + image_url[index:]
+                return fixed_url
+            
+            return image_url  # Return the original image URL if not applicable
+
         return None
