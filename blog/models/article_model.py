@@ -7,6 +7,11 @@ from blog.utils.blog_utils import count_words, read_time
 from blog.models.category_model import Category
 import cloudinary.uploader
 import cloudinary.api
+from urllib.parse import urlparse
+import environ
+
+# Initialize environment variables
+env = environ.Env()
 
 class ArticleManager(models.Manager):
     def get_queryset(self):
@@ -76,6 +81,15 @@ class Article(models.Model):
         if self.image and not self._state.adding:  # Check if image is provided and not a new object
             upload_response = cloudinary.uploader.upload(self.image)
             self.image = upload_response.get('secure_url')  # Save the Cloudinary URL
+
+        # Extract Cloudinary URL from combined URL if needed
+        if self.image:
+            heroku_url = env('HEROKU_APP_URL')  # Load Heroku app URL from environment variable
+            parsed_url = urlparse(self.image.url)
+            if parsed_url.netloc == heroku_url:
+                # Assuming the Cloudinary URL is always after the host URL
+                cloudinary_url = parsed_url.path.lstrip('/')
+                self.image = f'https://{cloudinary_url}'  # Constructing full Cloudinary URL
 
         # Handle empty body
         self.count_words = count_words(self.body) if self.body else 0
