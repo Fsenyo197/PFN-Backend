@@ -6,11 +6,7 @@ from tinymce.models import HTMLField
 from blog.utils.blog_utils import count_words, read_time
 from blog.models.category_model import Category
 import cloudinary.uploader
-from django.core.files.storage import default_storage
-import environ
-
-# Initialize environment variables
-env = environ.Env()
+import cloudinary.api
 
 class ArticleManager(models.Manager):
     def get_queryset(self):
@@ -36,8 +32,7 @@ class Article(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='articles')
     title = models.CharField(max_length=250, null=False, blank=False)
     slug = models.SlugField(unique=True)
-    image = models.ImageField(null=True, blank=True)  # Allows image upload
-    image_public_id = models.CharField(max_length=255, null=True, blank=True)  # Stores Cloudinary public_id
+    image = models.ImageField(null=True, blank=True)
     image_credit = models.CharField(max_length=250, null=True, blank=True)
     body = HTMLField(blank=True)
     tags = TaggableManager(blank=True)
@@ -77,20 +72,10 @@ class Article(models.Model):
                 self.slug = f'{original_slug}-{counter}'
                 counter += 1
 
-        # Save the instance first to ensure the image file is available in self.image.path
-        super(Article, self).save(*args, **kwargs)
-
-        # Upload to Cloudinary only if a new image is provided and no public_id exists
-        if self.image and not self.image_public_id:
-            if hasattr(self.image, 'path'):
-                upload_response = cloudinary.uploader.upload(self.image.path)
-                self.image_public_id = upload_response.get('public_id')
-
-                # Optionally, delete the local file after uploading to Cloudinary
-                default_storage.delete(self.image.path)
-
-                # Save the model again to store the Cloudinary public_id
-                super(Article, self).save(*args, **kwargs)
+        # Upload image to Cloudinary if a new image is provided
+        if self.image and not self._state.adding:  # Check if image is provided and not a new object
+            upload_response = cloudinary.uploader.upload(self.image)
+            self.image = upload_response.get('secure_url')  # Save the Cloudinary URL
 
         # Handle empty body
         self.count_words = count_words(self.body) if self.body else 0
