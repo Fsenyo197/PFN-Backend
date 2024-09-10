@@ -3,7 +3,6 @@ from blog.models.article_model import Article
 
 class ArticleSerializer(serializers.ModelSerializer):
     category = serializers.ReadOnlyField(source="category.name")
-    image = serializers.SerializerMethodField()
 
     class Meta:
         model = Article
