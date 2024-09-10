@@ -8,9 +8,3 @@ class ArticleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Article
         fields = ('category', 'title', 'slug', 'image', 'body', 'date_published', 'meta_description', 'meta_keywords')
-
-    def get_image(self, obj):
-        if obj.image:
-            # Return only the Cloudinary URL (host URL included)
-            return obj.image.url if hasattr(obj.image, 'url') else obj.image
-        return None
