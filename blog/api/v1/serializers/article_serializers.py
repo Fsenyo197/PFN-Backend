@@ -7,7 +7,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = ('category', 'title', 'slug', 'image', 'body', 'date_published', 'meta_description', 'meta_keywords', 'tags')
+        fields = ('category', 'title', 'slug', 'image', 'image_credit', 'body', 'date_published', 'meta_description', 'meta_keywords', 'read_time')
 
     def get_image(self, obj):
         if obj.image:
