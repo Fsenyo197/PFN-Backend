@@ -89,7 +89,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
-                'django.template.context_processors.request',
+                'django.template.context_processors.request',  # Required by Django
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -155,12 +155,19 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 
+# Media files configuration
+MEDIA_URL = '/media/'
+
+# Cloudinary configuration
 cloudinary.config( 
     cloud_name = env('CLOUDINARY_CLOUD_NAME'),
     api_key = env('CLOUDINARY_API_KEY'),
     api_secret = env('CLOUDINARY_API_SECRET'),
     secure = True
 )
+
+# Set Cloudinary as the default file storage
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Specifies the CSS Framework Crispy Forms should use.
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -187,9 +194,9 @@ TINYMCE_DEFAULT_CONFIG = {
     'theme': 'silver', 
     'plugins': '''
         textcolor save link image media preview codesample contextmenu
-        table code lists fullscreen  insertdatetime  nonbreaking
-        contextmenu directionality searchreplace wordcount visualblocks
-        visualchars code fullscreen autolink lists  charmap print  hr
+        table code lists fullscreen insertdatetime nonbreaking
+        directionality searchreplace wordcount visualblocks
+        visualchars code fullscreen autolink lists charmap print hr
         anchor pagebreak
     ''',
     'toolbar1': '''
@@ -205,11 +212,19 @@ TINYMCE_DEFAULT_CONFIG = {
     'contextmenu': 'formats | link image',
     'menubar': True,
     'statusbar': True,
+    'images_upload_url': '/tinymce/upload_image/',  # Endpoint for image uploads
+    'automatic_uploads': True,
+    'file_picker_types': 'image',
+    # Optional: Define a custom image upload handler (JavaScript function)
+    # 'images_upload_handler': 'custom_image_upload_handler',
 }
 
 # CORS Configuration
-CORS_ALLOW_ALL_ORIGINS = False  # Optionally, set this to True for development
+CORS_ALLOW_ALL_ORIGINS = False  # Set to False for production
 CORS_ALLOWED_ORIGINS = [
-    'https://pfn-frontend-prli35rjl-senyos-projects-f8c5d909.vercel.app',
+    'https://propfirmnews.live',
     'https://pfn-frontend.vercel.app',
+    # Add other allowed origins if necessary
 ]
+
+# Additional configurations can be added below as needed
