@@ -31,7 +31,7 @@ class Article(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='articles')
     title = models.CharField(max_length=250, null=False, blank=False)
     slug = models.SlugField(unique=True)
-    image = CloudinaryField('image', null=True, blank=True)  # Correct CloudinaryField usage
+    image = CloudinaryField('image', null=True, blank=True) 
     image_credit = models.CharField(max_length=250, null=True, blank=True)
     body = HTMLField(blank=True)
     tags = TaggableManager(blank=True)

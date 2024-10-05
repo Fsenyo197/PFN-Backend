@@ -3,7 +3,7 @@ from django.utils.text import slugify
 
 class Category(models.Model):
     name = models.CharField(max_length=100, null=False, blank=False)
-    slug = models.SlugField(unique=True)  # Ensure slug is unique
+    slug = models.SlugField(unique=True)
     approved = models.BooleanField(default=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)

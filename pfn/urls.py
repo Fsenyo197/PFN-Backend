@@ -1,11 +1,11 @@
 from django.contrib import admin
 from django.urls import include, path
-from blog.views import tinymce_image_upload  # Import the view
+from blog.views import tinymce_image_upload
 
 urlpatterns = [
     path('api/v1/', include('blog.api.v1.routers.routers')),
     path('admin/', admin.site.urls),
-    path('tinymce/upload_image/', tinymce_image_upload, name='tinymce_image_upload'),  # Map the URL to the view
+    path('tinymce/upload_image/', tinymce_image_upload, name='tinymce_image_upload'),
 ]
 
 # Modifies default django admin titles and headers with custom app detail.

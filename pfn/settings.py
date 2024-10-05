@@ -67,9 +67,9 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Added for serving static files
-    'corsheaders.middleware.CorsMiddleware',  # Added for CORS
-    'django.middleware.common.CommonMiddleware',  # Required for CORS
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -89,7 +89,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
-                'django.template.context_processors.request',  # Required by Django
+                'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -149,7 +149,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "blog/static"),
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'  # Added Whitenoise storage
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' 
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
@@ -209,11 +209,9 @@ TINYMCE_DEFAULT_CONFIG = {
     'contextmenu': 'formats | link image',
     'menubar': True,
     'statusbar': True,
-    'images_upload_url': '/tinymce/upload_image/',  # Endpoint for image uploads
+    'images_upload_url': '/tinymce/upload_image/',
     'automatic_uploads': True,
     'file_picker_types': 'image',
-    # Optional: Define a custom image upload handler (JavaScript function)
-    # 'images_upload_handler': 'custom_image_upload_handler',
 }
 
 # CORS Configuration
@@ -223,5 +221,3 @@ CORS_ALLOWED_ORIGINS = [
     'https://pfn-frontend.vercel.app',
     # Add other allowed origins if necessary
 ]
-
-# Additional configurations can be added below as needed
