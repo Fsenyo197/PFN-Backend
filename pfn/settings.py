@@ -193,11 +193,8 @@ TINYMCE_DEFAULT_CONFIG = {
     'selector': 'textarea',
     'theme': 'silver', 
     'plugins': '''
-        textcolor save link image media preview codesample contextmenu
-        table code lists fullscreen insertdatetime nonbreaking
-        directionality searchreplace wordcount visualblocks
-        visualchars code fullscreen autolink lists charmap print hr
-        anchor pagebreak
+        save link image media preview codesample table code lists fullscreen insertdatetime nonbreaking
+        directionality searchreplace wordcount visualblocks visualchars autolink lists charmap print anchor pagebreak
     ''',
     'toolbar1': '''
         fullscreen preview bold italic underline | fontselect,
@@ -212,6 +209,7 @@ TINYMCE_DEFAULT_CONFIG = {
     'contextmenu': 'formats | link image',
     'menubar': True,
     'statusbar': True,
+    'images_upload_url': '/tinymce/upload_image/',  # Endpoint for image uploads
     'automatic_uploads': True,
     'file_picker_types': 'image',
     # Optional: Define a custom image upload handler (JavaScript function)
