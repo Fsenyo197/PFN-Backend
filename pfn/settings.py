@@ -212,7 +212,6 @@ TINYMCE_DEFAULT_CONFIG = {
     'contextmenu': 'formats | link image',
     'menubar': True,
     'statusbar': True,
-    'images_upload_url': '/tinymce/upload_image/',  # Endpoint for image uploads
     'automatic_uploads': True,
     'file_picker_types': 'image',
     # Optional: Define a custom image upload handler (JavaScript function)
