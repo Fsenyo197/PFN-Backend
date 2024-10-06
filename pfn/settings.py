@@ -218,6 +218,7 @@ TINYMCE_DEFAULT_CONFIG = {
 CORS_ALLOW_ALL_ORIGINS = False  # Set to False for production
 CORS_ALLOWED_ORIGINS = [
     'https://propfirmnews.live',
+    'https://www.propfirmnews.live',
     'https://pfn-frontend.vercel.app',
     # Add other allowed origins if necessary
 ]
