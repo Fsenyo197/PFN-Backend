@@ -14,31 +14,35 @@ class DiscountCodeCreateForm(forms.ModelForm):
             'class': 'form-control',
             'id': 'discountImage'
         },
-        required=False  # Make image optional if desired
+        required=False
     )
+    image_credit = forms.CharField(required=False, widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'id': 'imageCredit',
+    }))
+    status = forms.ChoiceField(choices=DiscountCode.STATUS_CHOICES, widget=forms.Select(attrs={
+        'class': 'form-control',
+        'id': 'discountStatus'
+    }))
 
     class Meta:
         model = DiscountCode
-        fields = ['firm_name', 'discount_code', 'discount_percentage', 'image', 'title', 'body', 'date', 'duration']
+        fields = ['firm_name', 'discount_code', 'discount_percentage', 'image', 'image_credit', 'title', 'body', 'date', 'duration', 'status',]
         widgets = {
             'firm_name': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter Firm Name',
                 'id': 'firmName'
             }),
             'discount_code': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter Discount Code',
                 'id': 'discountCode'
             }),
             'discount_percentage': forms.NumberInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter Discount Percentage',
                 'id': 'discountPercentage'
             }),
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter Title',
                 'id': 'discountTitle'
             }),
             'date': forms.DateInput(attrs={
@@ -48,7 +52,6 @@ class DiscountCodeCreateForm(forms.ModelForm):
             }),
             'duration': forms.NumberInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter Duration (in days)',
                 'id': 'discountDuration'
             })
         }
@@ -64,31 +67,35 @@ class DiscountCodeUpdateForm(forms.ModelForm):
             'class': 'form-control',
             'id': 'discountImage'
         },
-        required=False  # Make image optional if desired
+        required=False
     )
+    image_credit = forms.CharField(required=False, widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'id': 'imageCredit',
+    }))
+    status = forms.ChoiceField(choices=DiscountCode.STATUS_CHOICES, widget=forms.Select(attrs={
+        'class': 'form-control',
+        'id': 'discountStatus'
+    }))
 
     class Meta:
         model = DiscountCode
-        fields = ['firm_name', 'discount_code', 'discount_percentage', 'image', 'title', 'body', 'date', 'duration']
+        fields = ['firm_name', 'discount_code', 'discount_percentage', 'image', 'image_credit', 'title', 'body', 'date', 'duration', 'status',]
         widgets = {
             'firm_name': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter Firm Name',
                 'id': 'firmName'
             }),
             'discount_code': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter Discount Code',
                 'id': 'discountCode'
             }),
             'discount_percentage': forms.NumberInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter Discount Percentage',
                 'id': 'discountPercentage'
             }),
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter Title',
                 'id': 'discountTitle'
             }),
             'date': forms.DateInput(attrs={
@@ -98,7 +105,6 @@ class DiscountCodeUpdateForm(forms.ModelForm):
             }),
             'duration': forms.NumberInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter Duration (in days)',
                 'id': 'discountDuration'
             })
         }

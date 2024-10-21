@@ -38,7 +38,6 @@ class ArticleCreateForm(forms.ModelForm):
             'title': TextInput(attrs={
                                      'name': "article-title",
                                      'class': "form-control",
-                                     'placeholder': "Enter Article Title",
                                      'id': "articleTitle"
                                      }),
 
@@ -54,7 +53,6 @@ class ArticleCreateForm(forms.ModelForm):
             'image_credit': TextInput(attrs={
                 'name': "image_credit",
                 'class': "form-control",
-                'placeholder': "Example: made4dev.com (Premium Programming T-shirts)",
                 'id': "image_credit"
             }),
 
@@ -68,7 +66,6 @@ class ArticleCreateForm(forms.ModelForm):
             'tags': TextInput(attrs={
                                      'name': "tags",
                                      'class': "form-control",
-                                     'placeholder': "Example: sports, game, politics",
                                      'id': "tags",
                                      'data-role': "tagsinput"
                                      }),
@@ -118,14 +115,12 @@ class ArticleUpdateForm(forms.ModelForm):
             'title': TextInput(attrs={
                 'name': "article-title",
                 'class': "form-control",
-                'placeholder': "Enter Article Title",
                 'id': "articleTitle"
             }),
 
             'image_credit': TextInput(attrs={
                 'name': "image_credit",
                 'class': "form-control",
-                'placeholder': "Example: made4dev.com (Premium Programming T-shirts)",
                 'id': "image_credit"
             }),
 

@@ -38,22 +38,10 @@ class DiscountCodeAdmin(admin.ModelAdmin):
     Admin panel configuration for DiscountCode model.
     """
     list_display = ('firm_name', 'discount_code', 'discount_percentage', 'date', 'duration', 'is_active')
-    list_filter = ('firm_name', 'discount_percentage', 'date')
+    list_filter = ('firm_name', 'discount_percentage', 'status', 'date')
     search_fields = ('firm_name', 'discount_code', 'title')
-    ordering = ['-date']
+    ordering = ['status', '-date']
     readonly_fields = ('date_created', 'date_updated')
-    
-    fieldsets = (
-        (None, {
-            'fields': ('firm_name', 'discount_code', 'title', 'body')
-        }),
-        ('Discount Details', {
-            'fields': ('discount_percentage', 'image', 'date', 'duration')
-        }),
-        ('Metadata', {
-            'fields': ('date_created', 'date_updated')
-        }),
-    )
     
     def is_active(self, obj):
         return obj.is_active()
