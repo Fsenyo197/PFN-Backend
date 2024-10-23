@@ -17,7 +17,7 @@ class ArticleManager(models.Manager):
         return super().get_queryset().filter(deleted=True)
 
 class Article(models.Model):
-    # Article status constants
+    # Article and discount status constants
     DRAFTED = "DRAFTED"
     PUBLISHED = "PUBLISHED"
 
@@ -43,6 +43,14 @@ class Article(models.Model):
     count_words = models.PositiveIntegerField(default=0)
     read_time = models.PositiveIntegerField(default=0)
     deleted = models.BooleanField(default=False)  # Soft deletion flag
+
+    # Discount-specific fields
+    firm_name = models.CharField(max_length=250, null=True, blank=True)  # Optional for non-discount articles
+    discount_code = models.CharField(max_length=100, unique=True, null=True, blank=True)
+    discount_percentage = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    duration = models.PositiveIntegerField(null=True, blank=True)  # Discount duration
+    date = models.DateField(default=timezone.now)  # Date for both articles and discounts
+    website_domain = models.URLField(max_length=255, null=True, blank=True)  # New field for storing website domain
 
     # SEO Fields
     meta_description = models.CharField(max_length=160, blank=True, null=True)
@@ -85,4 +93,21 @@ class Article(models.Model):
     def restore(self):
         """Restore a soft-deleted article by setting the deleted flag to False."""
         self.deleted = False
+        self.save()
+
+    def is_discount_active(self):
+        """Returns True if the discount is still valid based on the duration."""
+        if self.duration:
+            expiry_date = self.date + timezone.timedelta(days=self.duration)
+            return timezone.now().date() <= expiry_date
+        return False
+
+    def publish(self):
+        """Set the status to published."""
+        self.status = self.PUBLISHED
+        self.save()
+
+    def draft(self):
+        """Set the status to drafted."""
+        self.status = self.DRAFTED
         self.save()

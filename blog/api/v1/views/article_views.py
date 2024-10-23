@@ -17,3 +17,10 @@ class CategoryArticleList(generics.ListAPIView):
         category_name = self.kwargs['category_name']
         service = ArticleService()
         return service.get_published_articles_by_category(category_name)
+
+class DiscountArticleList(generics.ListAPIView):
+    serializer_class = ArticleSerializer
+
+    def get_queryset(self):
+        service = ArticleService()
+        return service.get_published_discounts()  # Call the service method to get discount articles

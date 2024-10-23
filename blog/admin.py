@@ -1,10 +1,6 @@
-# Core Django imports.
 from django.contrib import admin
-
-# Blog application imports.
 from blog.models.article_model import Article
 from blog.models.category_model import Category
-from blog.models.discount_model import DiscountCode  # Import the DiscountCode model
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -23,26 +19,29 @@ class ArticleAdmin(admin.ModelAdmin):
     """
     Admin panel configuration for Article model.
     """
-    list_display = ('category', 'title', 'slug', 'status')
+    list_display = ('category', 'title', 'slug', 'status', 'discount_code', 'firm_name', 'discount_percentage', 'duration')
     list_filter = ('status', 'date_created', 'date_published',)
     search_fields = ('title', 'body',)
     prepopulated_fields = {'slug': ('title',)}
     date_hierarchy = 'date_published'
     ordering = ['status', '-date_created']
-    readonly_fields = ('views', 'count_words', 'read_time')
-
-
-@admin.register(DiscountCode)
-class DiscountCodeAdmin(admin.ModelAdmin):
-    """
-    Admin panel configuration for DiscountCode model.
-    """
-    list_display = ('firm_name', 'discount_code', 'discount_percentage', 'date', 'duration', 'is_active')
-    list_filter = ('firm_name', 'discount_percentage', 'status', 'date')
-    search_fields = ('firm_name', 'discount_code', 'title')
-    ordering = ['status', '-date']
-    readonly_fields = ('date_created', 'date_updated')
     
-    def is_active(self, obj):
-        return obj.is_active()
-    is_active.boolean = True  # Display as a boolean checkmark
+    # Add date_created and date_updated to readonly fields
+    readonly_fields = ('views', 'count_words', 'read_time', 'date_created', 'date_updated')
+
+    # Adding the discount-specific fields to the form
+    fieldsets = (
+        (None, {
+            'fields': ('category', 'title', 'slug', 'body', 'status', 'image', 'image_credit', 'meta_description', 'meta_keywords', 'date_published', 'views', 'count_words', 'read_time')
+        }),
+        ('Discount Information', {
+            'fields': ('firm_name', 'discount_code', 'discount_percentage', 'duration', 'website_domain'),
+            'classes': ('collapse',),  # Make this section collapsible
+        }),
+    )
+
+    # Optionally, you can define which fields are editable
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return self.readonly_fields + ('slug',)  # Prevent slug editing for existing objects
+        return self.readonly_fields
