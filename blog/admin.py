@@ -32,7 +32,7 @@ class ArticleAdmin(admin.ModelAdmin):
     # Adding the discount-specific fields to the form
     fieldsets = (
         (None, {
-            'fields': ('category', 'title', 'slug', 'body', 'status', 'image', 'image_credit', 'meta_description', 'meta_keywords', 'date_published', 'views', 'count_words', 'read_time')
+            'fields': ('category', 'title', 'slug',  'image', 'image_credit', 'body', 'status', 'meta_description', 'meta_keywords', 'date_published', 'views', 'count_words', 'read_time')
         }),
         ('Discount Information', {
             'fields': ('firm_name', 'discount_code', 'discount_percentage', 'duration', 'website_domain'),
