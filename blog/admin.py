@@ -28,17 +28,7 @@ class ArticleAdmin(admin.ModelAdmin):
     
     # Add date_created and date_updated to readonly fields
     readonly_fields = ('views', 'count_words', 'read_time', 'date_created', 'date_updated')
-
-    # Adding the discount-specific fields to the form
-    fieldsets = (
-        (None, {
-            'fields': ('category', 'title', 'slug',  'image', 'image_credit', 'body', 'status', 'meta_description', 'meta_keywords', 'date_published', 'views', 'count_words', 'read_time')
-        }),
-        ('Discount Information', {
-            'fields': ('firm_name', 'discount_code', 'discount_percentage', 'duration', 'website_domain'),
-            'classes': ('collapse',),  # Make this section collapsible
-        }),
-    )
+    
 
     # Optionally, you can define which fields are editable
     def get_readonly_fields(self, request, obj=None):
