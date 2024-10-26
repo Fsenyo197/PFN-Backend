@@ -10,18 +10,16 @@ import json  # Import json module to handle JSON data
 class PropFirmAdmin(admin.ModelAdmin):
     form = PropFirmForm
 
-    list_display = ('name', 'display_trading_platforms', 'news_rule', 'copy_trading', 'consistency_rule', 'crypto_payout_option')
-    list_filter = ('news_rule', 'copy_trading', 'consistency_rule', 'crypto_payout_option')
-    search_fields = ('name',)
-    ordering = ['name']
-
     fieldsets = (
         (None, {
-            'fields': ('name', 'about', 'trading_platforms', 'phase_type')
+            'fields': ('name', 'about', 'trading_platforms')
         }),
         ('Account Plans', {
             'fields': ('account_plans',),
-            'description': 'Enter account plan details as JSON',
+            'description': format_html(
+                '<div id="account-plans-container"></div>'
+                '<button type="button" id="add-account-plan">Add Account Plan</button>'
+            ),
         }),
         ('Trading Rules', {
             'fields': ('news_rule', 'copy_trading', 'consistency_rule'),
@@ -34,40 +32,44 @@ class PropFirmAdmin(admin.ModelAdmin):
         }),
     )
 
-    def display_trading_platforms(self, obj):
-        """ Custom display for trading platforms in the list view. """
-        return format_html(", ".join(obj.trading_platforms))
-    display_trading_platforms.short_description = 'Trading Platforms'
-
+    
     def save_model(self, request, obj, form, change):
         account_plans = []
-        for plan in request.POST.getlist('account_plans'):
-            # Assuming plan is passed as JSON
-            account_plans.append(json.loads(plan))
-        obj.account_plans = account_plans
+        
+        # Retrieve account plan data from POST
+        plan_phases = request.POST.getlist('account_plans[]')
+        plan_sizes = request.POST.getlist('account_size[]')
+        plan_prices = request.POST.getlist('price[]')
+        plan_daily_drawdowns = request.POST.getlist('daily_drawdown[]')
+        plan_total_drawdowns = request.POST.getlist('total_drawdown[]')
+
+        # Combine the retrieved data into account plans
+        for i in range(len(plan_phases)):
+            account_plan = {
+                'phase': plan_phases[i],
+                'account_size': plan_sizes[i],
+                'price': plan_prices[i],
+                'daily_drawdown': plan_daily_drawdowns[i],
+                'total_drawdown': plan_total_drawdowns[i],
+            }
+            account_plans.append(account_plan)
+
+        obj.account_plans = json.dumps(account_plans)  # Save as JSON
         super().save_model(request, obj, form, change)
 
     class Media:
-        js = ('blog/utils/propfirm_admin.js',)
-
+        js = ('admin/js/propfirm_admin.js',)
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    """
-    Admin panel configuration for Category model.
-    """
     list_display = ('name', 'slug', 'approved')
     list_filter = ('approved',)
     search_fields = ('name',)
     prepopulated_fields = {'slug': ('name',)}
     ordering = ['name']
 
-
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
-    """
-    Admin panel configuration for Article model.
-    """
     list_display = (
         'category', 
         'title', 

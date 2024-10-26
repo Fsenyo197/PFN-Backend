@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import formset_factory
 from blog.models.propfirm_model import PropFirm
 
 class AccountPlanForm(forms.Form):
@@ -10,7 +11,7 @@ class AccountPlanForm(forms.Form):
 class PropFirmForm(forms.ModelForm):
     class Meta:
         model = PropFirm
-        fields = '__all__'  # Use all fields or specify them as needed
+        fields = '__all__'
 
     trading_platforms = forms.MultipleChoiceField(
         choices=PropFirm.TRADING_PLATFORMS_CHOICES,

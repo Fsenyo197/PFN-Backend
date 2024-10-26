@@ -31,7 +31,6 @@ class PropFirm(models.Model):
         default=list,
     )
 
-    # Phase Fields
     PHASE_CHOICES = [
         ('one_phase', 'One Phase'),
         ('two_phase', 'Two Phase'),
@@ -39,5 +38,3 @@ class PropFirm(models.Model):
         ('four_phase', 'Four Phase'),
         ('instant_funding', 'Instant Funding'),
     ]
-
-    phase_type = models.CharField(max_length=50, choices=PHASE_CHOICES, blank=True, null=True)
