@@ -107,6 +107,16 @@ DATABASES = {
     'default': env.db(),  # Reads DATABASE_URL from environment variables
 }
 
+# Update the ENGINE to use connection pooling
+DATABASES['default']['ENGINE'] = 'dj_db_conn_pool.backends.postgresql'
+
+# Add connection pooling options
+DATABASES['default']['POOL_OPTIONS'] = {
+    'POOL_SIZE': 10,
+    'MAX_OVERFLOW': 10,
+    'RECYCLE': 24 * 60 * 60,
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
