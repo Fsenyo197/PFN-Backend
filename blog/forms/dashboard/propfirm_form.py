@@ -1,17 +1,10 @@
 from django import forms
-from django.forms import formset_factory
 from blog.models.propfirm_model import PropFirm
-
-class AccountPlanForm(forms.Form):
-    account_size = forms.IntegerField(label='Account Size', required=False)
-    price = forms.DecimalField(label='Price', required=False)
-    daily_drawdown = forms.DecimalField(label='Daily Drawdown', required=False)
-    total_drawdown = forms.DecimalField(label='Total Drawdown', required=False)
 
 class PropFirmForm(forms.ModelForm):
     class Meta:
         model = PropFirm
-        fields = '__all__'
+        fields = '__all__'  # Include all fields, or specify the fields you want
 
     trading_platforms = forms.MultipleChoiceField(
         choices=PropFirm.TRADING_PLATFORMS_CHOICES,
@@ -19,15 +12,14 @@ class PropFirmForm(forms.ModelForm):
         required=False
     )
 
-    phase_type = forms.MultipleChoiceField(
-        choices=PropFirm.PHASE_CHOICES,
-        widget=forms.CheckboxSelectMultiple,
-        required=False
+    status = forms.ChoiceField(
+        choices=PropFirm.STATUS_CHOICES,
+        widget=forms.Select(attrs={
+            "class": "form-control selectpicker",
+            "name": "status",
+            "id": "propFirmStatus",
+            "data-live-search": "true",
+            "title": "Select Status"
+        }),
+        required=True,
     )
-
-    # This will hold the account plans; you can use a formset later to display it
-    account_plans = forms.CharField(widget=forms.HiddenInput(), required=False)
-
-    def clean(self):
-        cleaned_data = super().clean()
-        # Add any necessary validation logic here

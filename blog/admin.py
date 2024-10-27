@@ -3,16 +3,18 @@ from django.utils.html import format_html
 from blog.models.propfirm_model import PropFirm
 from blog.models.article_model import Article
 from blog.models.category_model import Category
-from blog.forms.dashboard.propfirm_form import PropFirmForm  # Import the PropFirmForm
-import json  # Import json module to handle JSON data
+from blog.forms.dashboard.propfirm_form import PropFirmForm
+import json
 
 @admin.register(PropFirm)
 class PropFirmAdmin(admin.ModelAdmin):
     form = PropFirmForm
 
+    list_filter = ('status',)
+
     fieldsets = (
         (None, {
-            'fields': ('name', 'about', 'trading_platforms')
+            'fields': ('name', 'about', 'status', 'trading_platforms')
         }),
         ('Account Plans', {
             'fields': ('account_plans',),
@@ -54,7 +56,7 @@ class PropFirmAdmin(admin.ModelAdmin):
             }
             account_plans.append(account_plan)
 
-        obj.account_plans = json.dumps(account_plans)  # Save as JSON
+        obj.account_plans = json.dumps(account_plans)
         super().save_model(request, obj, form, change)
 
     class Media:
