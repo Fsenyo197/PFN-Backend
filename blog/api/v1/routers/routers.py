@@ -4,9 +4,10 @@ from django.urls import path
 # Blog application imports
 from blog.api.v1.views.category_views import CategoryList
 from blog.api.v1.views.article_views import ArticleList, CategoryArticleList, DiscountArticleList
+from blog.api.v1.views.propfirm_views import PropFirmListView   
 
 urlpatterns = [
-    # Category and Article paths
+    path('propfirms/', PropFirmListView.as_view(), name='propfirm-list'),
     path('categories/', CategoryList.as_view(), name='category-list'),
     path('articles/', ArticleList.as_view(), name='article-list'),
     path('articles/category/<str:category_name>/', CategoryArticleList.as_view(), name='category-article-list'),

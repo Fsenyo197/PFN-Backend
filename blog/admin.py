@@ -10,11 +10,9 @@ import json
 class PropFirmAdmin(admin.ModelAdmin):
     form = PropFirmForm
 
-    list_filter = ('status',)
-
     fieldsets = (
         (None, {
-            'fields': ('name', 'about', 'status', 'trading_platforms')
+            'fields': ('name', 'about', 'trading_platforms')
         }),
         ('Account Plans', {
             'fields': ('account_plans',),

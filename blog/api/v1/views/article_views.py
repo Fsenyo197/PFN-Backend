@@ -23,4 +23,4 @@ class DiscountArticleList(generics.ListAPIView):
 
     def get_queryset(self):
         service = ArticleService()
-        return service.get_published_discounts()  # Call the service method to get discount articles
+        return service.get_published_discounts()  

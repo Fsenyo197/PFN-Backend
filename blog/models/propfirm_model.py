@@ -3,14 +3,6 @@ from django.contrib.postgres.fields import ArrayField
 from django.db.models import JSONField  
 
 class PropFirm(models.Model):
-    DRAFTED = "DRAFTED"
-    PUBLISHED = "PUBLISHED"
-
-    STATUS_CHOICES = (
-        (DRAFTED, 'Draft'),
-        (PUBLISHED, 'Publish'),
-    )
-
     # Prop Firm Fields
     name = models.CharField(max_length=250, null=False, blank=False, unique=True)
     about = models.TextField(blank=True)  # Detailed description about the prop firm
@@ -19,9 +11,6 @@ class PropFirm(models.Model):
     consistency_rule = models.BooleanField(default=False)
     countries_prohibited = models.TextField(blank=True)
     crypto_payout_option = models.BooleanField(default=False)
-    
-    # New status field
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=DRAFTED)
 
     # Using JSONField to store account plans as a list of dictionaries
     account_plans = JSONField(blank=True, default=list)
