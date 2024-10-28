@@ -1,18 +1,27 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import JSONField  
+from django.db.models import JSONField
 
 class PropFirm(models.Model):
-    # Prop Firm Fields
-    name = models.CharField(max_length=250, null=False, blank=False, unique=True)
-    about = models.TextField(blank=True)  # Detailed description about the prop firm
+    # Basic Prop Firm Fields
+    name = models.CharField(max_length=250, unique=True)
+    about = models.TextField(blank=True) 
+    year_established = models.PositiveIntegerField(null=True, blank=True)
+    location = models.TextField(blank=True)
+    firm_type = models.CharField(max_length=100, blank=True)
+
+    # Features
     news_rule = models.BooleanField(default=False)
     copy_trading = models.BooleanField(default=False)
     consistency_rule = models.BooleanField(default=False)
+    two_percent_rule = models.BooleanField(default=False)
     countries_prohibited = models.TextField(blank=True)
-    crypto_payout_option = models.BooleanField(default=False)
+    
+    # Options
+    payout_options = models.CharField(max_length=250, blank=True)
+    payment_options = models.CharField(max_length=250, blank=True) 
 
-    # Using JSONField to store account plans as a list of dictionaries
+    # Account plans as a list of dictionaries
     account_plans = JSONField(blank=True, default=list)
 
     # Trading platforms field using ArrayField for PostgreSQL

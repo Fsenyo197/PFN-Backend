@@ -12,7 +12,7 @@ class PropFirmAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': ('name', 'about', 'trading_platforms')
+            'fields': ('name', 'about', 'year_established', 'firm_type', 'location', 'trading_platforms')
         }),
         ('Account Plans', {
             'fields': ('account_plans',),
@@ -22,17 +22,16 @@ class PropFirmAdmin(admin.ModelAdmin):
             ),
         }),
         ('Trading Rules', {
-            'fields': ('news_rule', 'copy_trading', 'consistency_rule'),
+            'fields': ('news_rule', 'copy_trading', 'two_percent_rule', 'consistency_rule'),
         }),
-        ('Payout Options', {
-            'fields': ('crypto_payout_option',),
+        ('Options', {
+            'fields': ('payout_options', 'payment_options'),
         }),
         ('Restrictions', {
             'fields': ('countries_prohibited',),
         }),
     )
 
-    
     def save_model(self, request, obj, form, change):
         account_plans = []
         
