@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
+from datetime import timedelta
 import os
 import environ
 
@@ -50,12 +51,13 @@ INSTALLED_APPS = [
     # Third Party Apps.
     'django_filters',
     'rest_framework',
+    'rest_framework_simplejwt',
     'taggit',
     'debug_toolbar',
     'crispy_forms',
     'crispy_bootstrap4',
     'tinymce',
-    'corsheaders',  # Added for handling CORS
+    'corsheaders', 
 
     # Cloudinary
     'cloudinary',
@@ -225,10 +227,26 @@ TINYMCE_DEFAULT_CONFIG = {
 }
 
 # CORS Configuration
-CORS_ALLOW_ALL_ORIGINS = False  # Set to False for production
+CORS_ALLOW_ALL_ORIGINS = False 
 CORS_ALLOWED_ORIGINS = [
     'https://propfirmnews.live',
     'https://www.propfirmnews.live',
     'https://pfn-frontend.vercel.app',
-    # Add other allowed origins if necessary
 ]
+
+# REST framework authentication
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+
+# JWT Authentication settings
+SIMPLE_JWT = {
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=365 * 100),
+}
