@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'taggit',
     'debug_toolbar',
     'crispy_forms',
@@ -108,17 +109,6 @@ WSGI_APPLICATION = 'pfn.wsgi.application'
 DATABASES = {
     'default': env.db(),  # Reads DATABASE_URL from environment variables
 }
-
-# Update the ENGINE to use connection pooling
-DATABASES['default']['ENGINE'] = 'dj_db_conn_pool.backends.postgresql'
-
-# Add connection pooling options
-DATABASES['default']['POOL_OPTIONS'] = {
-    'POOL_SIZE': 10,
-    'MAX_OVERFLOW': 10,
-    'RECYCLE': 24 * 60 * 60,
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -248,5 +238,7 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     'ALGORITHM': 'HS256',
     'SIGNING_KEY': SECRET_KEY,
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=365 * 100),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=365 * 100), # Token for 100 years
+    'BLACKLIST_AFTER_ROTATION': True, 
+    'ROTATE_REFRESH_TOKENS': True, 
 }
