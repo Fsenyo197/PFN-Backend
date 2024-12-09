@@ -1,10 +1,12 @@
 from rest_framework import generics
 from blog.api.v1.services.article_service import ArticleService
 from ..serializers.article_serializers import ArticleSerializer
+from rest_framework.permissions import IsAuthenticated
 
 class ArticleList(generics.ListAPIView):
     serializer_class = ArticleSerializer
     pagination_class = None
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         service = ArticleService()
@@ -12,6 +14,7 @@ class ArticleList(generics.ListAPIView):
 
 class CategoryArticleList(generics.ListAPIView):
     serializer_class = ArticleSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         category_name = self.kwargs['category_name']
@@ -20,7 +23,8 @@ class CategoryArticleList(generics.ListAPIView):
 
 class DiscountArticleList(generics.ListAPIView):
     serializer_class = ArticleSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         service = ArticleService()
-        return service.get_published_discounts()  
+        return service.get_published_discounts()

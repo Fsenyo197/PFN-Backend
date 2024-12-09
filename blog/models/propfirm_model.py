@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.postgres.fields import ArrayField
 from django.db.models import JSONField
 
 class PropFirm(models.Model):
@@ -34,7 +33,7 @@ class PropFirm(models.Model):
         ('In-House Trading Platform', 'In-House Trading Platform')
     ]
 
-    trading_platforms = ArrayField(
+    trading_platforms = JSONField(
         models.CharField(max_length=250, choices=TRADING_PLATFORMS_CHOICES),
         blank=True,
         default=list,

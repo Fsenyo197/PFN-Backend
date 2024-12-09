@@ -5,6 +5,27 @@ from blog.models.article_model import Article
 from blog.models.category_model import Category
 from blog.forms.dashboard.propfirm_form import PropFirmForm
 import json
+from blog.models.apikeys_model import APIKey
+
+@admin.register(APIKey)
+class APIKeyAdmin(admin.ModelAdmin):
+    list_display = ('user', 'key', 'is_active', 'created_at', 'last_used')
+    list_filter = ('is_active', 'created_at', 'last_used')
+    search_fields = ('user__username', 'key')
+    readonly_fields = ('key', 'secret', 'created_at', 'last_used')
+
+    def revoke_keys(self, request, queryset):
+        queryset.update(is_active=False)
+        self.message_user(request, "Selected keys have been revoked.")
+
+    actions = ['revoke_keys']
+
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+        return actions
+
 
 @admin.register(PropFirm)
 class PropFirmAdmin(admin.ModelAdmin):
