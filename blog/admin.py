@@ -33,7 +33,7 @@ class PropFirmAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': ('name', 'about', 'year_established', 'firm_type', 'location', 'trading_platforms')
+            'fields': ('name', 'year_established', 'firm_type', 'location', 'trading_platforms', 'drawdown_type', 'payout_frequency'),
         }),
         ('Account Plans', {
             'fields': ('account_plans',),
@@ -43,7 +43,7 @@ class PropFirmAdmin(admin.ModelAdmin):
             ),
         }),
         ('Trading Rules', {
-            'fields': ('news_rule', 'copy_trading', 'two_percent_rule', 'consistency_rule'),
+            'fields': ('news_rule', 'copy_trading', 'two_percent_rule', 'stop_loss_rule', 'consistency_rule'),
         }),
         ('Options', {
             'fields': ('payout_options', 'payment_options'),
@@ -60,6 +60,7 @@ class PropFirmAdmin(admin.ModelAdmin):
         plan_phases = request.POST.getlist('account_plans[]')
         plan_sizes = request.POST.getlist('account_size[]')
         plan_prices = request.POST.getlist('price[]')
+        plan_profit_split_ratio = request.POST.getlist('profit_split_ratio[]')
         plan_daily_drawdowns = request.POST.getlist('daily_drawdown[]')
         plan_total_drawdowns = request.POST.getlist('total_drawdown[]')
 
@@ -69,6 +70,7 @@ class PropFirmAdmin(admin.ModelAdmin):
                 'phase': plan_phases[i],
                 'account_size': plan_sizes[i],
                 'price': plan_prices[i],
+                'profit_split_ratio': plan_profit_split_ratio[i], 
                 'daily_drawdown': plan_daily_drawdowns[i],
                 'total_drawdown': plan_total_drawdowns[i],
             }

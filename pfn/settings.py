@@ -10,9 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
-from datetime import timedelta
 import os
 import environ
+from corsheaders.defaults import default_headers
 
 # Media files (User uploaded images) using Cloudinary
 import cloudinary
@@ -51,8 +51,6 @@ INSTALLED_APPS = [
     # Third Party Apps.
     'django_filters',
     'rest_framework',
-    'rest_framework_simplejwt',
-    'rest_framework_simplejwt.token_blacklist',
     'taggit',
     'debug_toolbar',
     'crispy_forms',
@@ -224,22 +222,22 @@ CORS_ALLOWED_ORIGINS = [
     'https://www.propfirmnews.live',
     'https://pfn-frontend.vercel.app',
 ]
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "X-API-Key",
+    "X-API-Secret",
+]
 
-# REST framework authentication
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
-}
+# API Key Management
+# API keys do not expire.
+API_KEY_LIFETIME_DAYS = None
 
-# JWT Authentication settings
-SIMPLE_JWT = {
-    'ALGORITHM': 'HS256',
-    'SIGNING_KEY': SECRET_KEY,
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=365 * 100), # Token for 100 years
-    'BLACKLIST_AFTER_ROTATION': True, 
-    'ROTATE_REFRESH_TOKENS': True, 
-}
+#TWO_FACTOR_AUTHENTICATION_METHODS = ['email', 'sms']
+
+# Session timeout after 1 hour of inactivity (3600 seconds)
+#SESSION_COOKIE_AGE = 3600
+
+# Optionally expire session when the browser is closed
+#SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Save session data on every request, useful for session expiration
+#SESSION_SAVE_EVERY_REQUEST = True
