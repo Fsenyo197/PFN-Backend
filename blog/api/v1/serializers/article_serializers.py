@@ -9,7 +9,7 @@ class ArticleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Article
         fields = (
-            'category', 'title', 'slug', 'image', 'image_credit', 
+            'id', 'category', 'title', 'slug', 'image', 'image_credit', 
             'body', 'date_published', 'meta_description', 
             'meta_keywords', 'read_time', 'discount_details'
         )
@@ -21,7 +21,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     def get_discount_details(self, obj):
         # Return discount details if the article belongs to the discount category
-        if obj.category.name == 'Discount':
+        if obj.category.name == 'Discount Codes':
             return {
                 'discount_code': obj.discount_code,
                 'discount_percentage': obj.discount_percentage,
