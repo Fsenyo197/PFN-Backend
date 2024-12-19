@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 import environ
+from corsheaders.defaults import default_headers
 
 # Media files (User uploaded images) using Cloudinary
 import cloudinary
@@ -55,7 +56,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap4',
     'tinymce',
-    'corsheaders',  # Added for handling CORS
+    'corsheaders', 
 
     # Cloudinary
     'cloudinary',
@@ -77,6 +78,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'blog.middleware.APIKeyAuthMiddleware',
 ]
 
 ROOT_URLCONF = 'pfn.urls'
@@ -106,7 +108,6 @@ WSGI_APPLICATION = 'pfn.wsgi.application'
 DATABASES = {
     'default': env.db(),  # Reads DATABASE_URL from environment variables
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -215,10 +216,28 @@ TINYMCE_DEFAULT_CONFIG = {
 }
 
 # CORS Configuration
-CORS_ALLOW_ALL_ORIGINS = False  # Set to False for production
+CORS_ALLOW_ALL_ORIGINS = False 
 CORS_ALLOWED_ORIGINS = [
     'https://propfirmnews.live',
     'https://www.propfirmnews.live',
     'https://pfn-frontend.vercel.app',
-    # Add other allowed origins if necessary
 ]
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "X-API-Key",
+    "X-API-Secret",
+]
+
+# API Key Management
+# API keys do not expire.
+API_KEY_LIFETIME_DAYS = None
+
+#TWO_FACTOR_AUTHENTICATION_METHODS = ['email', 'sms']
+
+# Session timeout after 1 hour of inactivity (3600 seconds)
+#SESSION_COOKIE_AGE = 3600
+
+# Optionally expire session when the browser is closed
+#SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Save session data on every request, useful for session expiration
+#SESSION_SAVE_EVERY_REQUEST = True
