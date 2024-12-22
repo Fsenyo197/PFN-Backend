@@ -21,10 +21,9 @@ class PropFirm(models.Model):
     # Choices for payout and payment options
     PAYOUT_OPTIONS_CHOICES = [
         ('Bank Transfer', 'Bank Transfer'),
-        ('PayPal', 'PayPal'),
+        ('Rise', 'Rise'),
         ('Cryptocurrency', 'Cryptocurrency'),
-        ('Skrill', 'Skrill'),
-        ('Neteller', 'Neteller'),
+        ('Wise', 'Wise'),
     ]
 
     PAYMENT_OPTIONS_CHOICES = [
@@ -33,7 +32,14 @@ class PropFirm(models.Model):
         ('Bank Transfer', 'Bank Transfer'),
         ('Cryptocurrency', 'Cryptocurrency'),
         ('PayPal', 'PayPal'),
-        ('Stripe', 'Stripe'),
+        ('Koka', 'Koka'),
+        ('Skrill', 'Skrill'),
+        ('Neteller', 'Neteller'),
+        ('Google Pay', 'Google Pay'),
+        ('Apple Pay', 'Apple Pay'),
+        ('Payoneer', 'Payoneer'),
+        ('Paysafe Card', 'Paysafe Card'),
+        ('Wise', 'Wise'),
     ]
 
     # Payout and payment options fields
