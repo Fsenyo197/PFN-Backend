@@ -34,6 +34,8 @@ class AccountPlanInline(admin.TabularInline):
         'account_size',
         'price',
         'profit_split_ratio',
+        'minimum_trading_days',
+        'leverage',
         'daily_drawdown',
         'total_drawdown',
         'currency',
@@ -70,7 +72,7 @@ class PropFirmAdmin(admin.ModelAdmin):
             ),
         }),
         ('Features', {
-            'fields': ('news_rule', 'copy_trading', 'two_percent_rule', 'stop_loss_rule', 'consistency_rule'),
+            'fields': ('expert_advisors', 'copy_trading', 'two_percent_rule', 'stop_loss_rule', 'consistency_rule'),
         }),
         ('Options', {
             'fields': ('payout_options', 'payment_options'),
