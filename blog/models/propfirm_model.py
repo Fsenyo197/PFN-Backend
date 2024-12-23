@@ -110,11 +110,12 @@ class AccountPlan(models.Model):
     phase = models.CharField(max_length=50, choices=PHASE_CHOICES)
     account_size = models.CharField(max_length=50)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    profit_split_ratio = models.CharField(max_length=50)
-    leverage = models.CharField(max_length=50, null=True, blank=True)
+    profit_split_ratio = models.CharField(max_length=10)
+    leverage = models.CharField(max_length=10, null=True, blank=True)
     minimum_trading_days = models.CharField(max_length=50, null=True, blank=True)
-    daily_drawdown = models.CharField(max_length=50)
-    total_drawdown = models.CharField(max_length=50)
+    profit_target = models.CharField(max_length=10, null=True, blank=True)
+    daily_drawdown = models.CharField(max_length=10)
+    total_drawdown = models.CharField(max_length=10)
 
     # New fields
     currency = models.CharField(max_length=10, default="USD")

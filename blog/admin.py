@@ -36,6 +36,7 @@ class AccountPlanInline(admin.TabularInline):
         'profit_split_ratio',
         'minimum_trading_days',
         'leverage',
+        'profit_target',
         'daily_drawdown',
         'total_drawdown',
         'currency',
