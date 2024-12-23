@@ -18,11 +18,11 @@ class PropFirm(models.Model):
     payout_frequency = models.CharField(max_length=100, blank=True)
 
     # Features
-    news_rule = models.BooleanField(default=False)
     copy_trading = models.BooleanField(default=False)
     consistency_rule = models.BooleanField(default=False)
     two_percent_rule = models.BooleanField(default=False)
     stop_loss_rule = models.BooleanField(default=False)
+    expert_advisors = models.BooleanField(default=False)
     countries_prohibited = models.TextField(blank=True)
 
     # Choices for payout and payment options
@@ -67,7 +67,9 @@ class PropFirm(models.Model):
         ('MT5', 'MT5'),
         ('CTrader', 'CTrader'),
         ('MatchTrader', 'MatchTrader'),
-        ('DXTrade', 'DXTrade'),
+        ('DXTrade', 'DXTrade'), 
+        ('TradeLocker', 'TradeLocker'),
+        ('Trading View', 'Trading View'),
         ('In-House Trading Platform', 'In-House Trading Platform'),
     ]
 
@@ -109,6 +111,8 @@ class AccountPlan(models.Model):
     account_size = models.CharField(max_length=50)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     profit_split_ratio = models.CharField(max_length=50)
+    leverage = models.CharField(max_length=50, null=True, blank=True)
+    minimum_trading_days = models.CharField(max_length=50, null=True, blank=True)
     daily_drawdown = models.CharField(max_length=50)
     total_drawdown = models.CharField(max_length=50)
 
