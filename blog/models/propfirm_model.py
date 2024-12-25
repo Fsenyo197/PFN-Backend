@@ -18,11 +18,12 @@ class PropFirm(models.Model):
     payout_frequency = models.CharField(max_length=100, blank=True)
 
     # Features
-    copy_trading = models.BooleanField(default=False)
+    copy_trading_rule = models.BooleanField(default=False)
     consistency_rule = models.BooleanField(default=False)
     two_percent_rule = models.BooleanField(default=False)
     stop_loss_rule = models.BooleanField(default=False)
-    expert_advisors = models.BooleanField(default=False)
+    expert_advisors_rule = models.BooleanField(default=False)
+    vpn_and_vps_rule = models.BooleanField(default=False)
     countries_prohibited = models.TextField(blank=True)
 
     # Choices for payout and payment options
@@ -47,6 +48,7 @@ class PropFirm(models.Model):
         ('Payoneer', 'Payoneer'),
         ('Paysafe Card', 'Paysafe Card'),
         ('Wise', 'Wise'),
+        ('Astropay', 'Astropay'),
     ]
 
     # Payout and payment options fields
@@ -109,11 +111,12 @@ class AccountPlan(models.Model):
     )
     phase = models.CharField(max_length=50, choices=PHASE_CHOICES)
     account_size = models.CharField(max_length=50)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    profit_split_ratio = models.CharField(max_length=10)
-    leverage = models.CharField(max_length=10, null=True, blank=True)
+    price = models.DecimalField(max_digits=20, decimal_places=2)
+    profit_split_ratio = models.CharField(max_length=50)
+    leverage = models.CharField(max_length=50, null=True, blank=True)
     minimum_trading_days = models.CharField(max_length=50, null=True, blank=True)
-    profit_target = models.CharField(max_length=10, null=True, blank=True)
+    profit_target = models.CharField(max_length=50, null=True, blank=True)
+    phase_time_limit = models.CharField(max_length=50, null=True, blank=True)
     daily_drawdown = models.CharField(max_length=10)
     total_drawdown = models.CharField(max_length=10)
 
