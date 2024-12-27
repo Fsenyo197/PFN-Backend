@@ -74,7 +74,7 @@ class PropFirmAdmin(admin.ModelAdmin):
             ),
         }),
         ('Features', {
-            'fields': ('expert_advisors_rule', 'copy_trading_rule', 'two_percent_rule', 'stop_loss_rule', 'vpn_and_vps_rule', 'consistency_rule'),
+            'fields': ('weekend_holding_rule', 'copy_trading_rule', 'two_percent_rule', 'stop_loss_rule', 'vpn_and_vps_rule', 'consistency_rule'),
         }),
         ('Options', {
             'fields': ('payout_options', 'payment_options'),

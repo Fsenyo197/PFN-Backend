@@ -12,7 +12,7 @@ class PropFirm(models.Model):
     name = models.CharField(max_length=250, unique=True) 
     website = models.URLField(null=True, blank=True)
     year_established = models.CharField(max_length=100, null=True, blank=True)
-    location = models.TextField(blank=True)
+    location = models.CharField(max_length=250, null=True, blank=True)
     firm_type = models.CharField(max_length=100, blank=True)
     drawdown_type = models.CharField(max_length=100, blank=True)
     payout_frequency = models.CharField(max_length=100, blank=True)
@@ -22,15 +22,15 @@ class PropFirm(models.Model):
     consistency_rule = models.BooleanField(default=False)
     two_percent_rule = models.BooleanField(default=False)
     stop_loss_rule = models.BooleanField(default=False)
-    expert_advisors_rule = models.BooleanField(default=False)
     vpn_and_vps_rule = models.BooleanField(default=False)
+    weekend_holding_rule = models.BooleanField(default=False)
     countries_prohibited = models.TextField(blank=True)
 
     # Choices for payout and payment options
     PAYOUT_OPTIONS_CHOICES = [
         ('Bank Transfer', 'Bank Transfer'),
         ('Rise', 'Rise'),
-        ('Cryptocurrency', 'Cryptocurrency'),
+        ('Direct Crypto', 'Direct Crypto'),
         ('Wise', 'Wise'),
     ]
 
