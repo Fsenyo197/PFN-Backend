@@ -107,11 +107,18 @@ class AccountPlan(models.Model):
         ('instant_funding', 'Instant Funding'),
     ]
 
+    ACCOUNT_TYPE_CHOICES = [
+        ('Forex', 'Forex'),
+        ('Stocks', 'Stocks'),
+        ('Crypto', 'Crypto'),
+        ('Futures', 'Futures'),
+    ]
+
     prop_firm = models.ForeignKey(
         PropFirm, related_name="account_plans", on_delete=models.CASCADE
     )
     phase = models.CharField(max_length=50, choices=PHASE_CHOICES)
-    account_type = models.CharField(max_length=50, default="Forex")
+    account_type = models.CharField(max_length=50, default="Forex", choices=ACCOUNT_TYPE_CHOICES)
     account_size = models.CharField(max_length=50)
     price = models.DecimalField(max_digits=20, decimal_places=2)
     profit_split_ratio = models.CharField(max_length=50, default="0")
