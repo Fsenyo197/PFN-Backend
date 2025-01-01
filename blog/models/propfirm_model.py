@@ -117,7 +117,7 @@ class AccountPlan(models.Model):
     prop_firm = models.ForeignKey(
         PropFirm, related_name="account_plans", on_delete=models.CASCADE
     )
-    phase = models.CharField(max_length=50, default="Two Phase", choices=PHASE_CHOICES)
+    phase = models.CharField(max_length=50, default="two_phase", choices=PHASE_CHOICES)
     account_type = models.CharField(max_length=50, default="Forex", choices=ACCOUNT_TYPE_CHOICES)
     account_size = models.CharField(max_length=50)
     price = models.DecimalField(max_digits=20, decimal_places=2)
