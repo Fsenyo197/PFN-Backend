@@ -31,15 +31,16 @@ class AccountPlanInline(admin.TabularInline):
     extra = 1
     fields = (
         'phase',
+        'account_type',
         'account_size',
         'price',
-        'profit_split_ratio',
-        'minimum_trading_days',
         'leverage',
+        'profit_split_ratio',
         'profit_target',
-        'phase_time_limit',
         'daily_drawdown',
         'total_drawdown',
+        'minimum_trading_days',
+        'phase_time_limit',
         'currency',
         'is_available',
         'status',
@@ -69,7 +70,7 @@ class PropFirmAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': (
-                'name', 'website', 'year_established', 'firm_type', 'location',
+                'name', 'about', 'website', 'year_established', 'firm_type', 'location',
                 'drawdown_type', 'payout_frequency', 'is_active', 'status',
             ),
         }),
@@ -79,11 +80,11 @@ class PropFirmAdmin(admin.ModelAdmin):
         ('Options', {
             'fields': ('payout_options', 'payment_options'),
         }),
-        ('Restrictions', {
-            'fields': ('countries_prohibited',),
-        }),
         ('Platforms', {
             'fields': ('trading_platforms',),
+        }),
+        ('Restrictions', {
+            'fields': ('countries_prohibited',),
         }),
     )
 

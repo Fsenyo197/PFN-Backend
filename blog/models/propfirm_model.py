@@ -9,7 +9,8 @@ class PropFirm(models.Model):
     ]
 
     # Basic Prop Firm Fields
-    name = models.CharField(max_length=250, unique=True) 
+    name = models.CharField(max_length=250, unique=True)
+    about = models.TextField(blank=True)
     website = models.URLField(null=True, blank=True)
     year_established = models.CharField(max_length=100, null=True, blank=True)
     location = models.CharField(max_length=250, null=True, blank=True)
@@ -110,6 +111,7 @@ class AccountPlan(models.Model):
         PropFirm, related_name="account_plans", on_delete=models.CASCADE
     )
     phase = models.CharField(max_length=50, choices=PHASE_CHOICES)
+    account_type = models.CharField(max_length=50, default="Forex")
     account_size = models.CharField(max_length=50)
     price = models.DecimalField(max_digits=20, decimal_places=2)
     profit_split_ratio = models.CharField(max_length=50, default="0")
