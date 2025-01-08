@@ -11,7 +11,7 @@ class PropFirm(models.Model):
 
     # Basic Prop Firm Fields
     name = models.CharField(max_length=250, unique=True)
-    slug = models.SlugField(unique=True, blank=True)
+    slug = models.SlugField(unique=False, blank=True)
     about = models.TextField(blank=True)
     website = models.URLField(null=True, blank=True, unique=True)
     broker = models.CharField(max_length=250, null=True, blank=True)
