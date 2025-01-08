@@ -62,6 +62,7 @@ class PropFirmAdmin(admin.ModelAdmin):
         'is_active',
     )
     search_fields = ('name', 'location', 'firm_type')
+    prepopulated_fields = {'slug': ('name',)}
     list_filter = ('firm_type', 'drawdown_type', 'payout_frequency', 'status', 'date_created', 'date_published', 'is_active')
     readonly_fields = ( 'date_created', 'date_updated')
     date_hierarchy = 'date_published'
@@ -70,7 +71,7 @@ class PropFirmAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': (
-                'name', 'about', 'website', 'year_established', 'firm_type', 'location',
+                'name', 'slug', 'about', 'broker', 'website', 'year_established', 'firm_type', 'location',
                 'drawdown_type', 'payout_frequency', 'is_active', 'status',
             ),
         }),

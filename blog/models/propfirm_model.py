@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import JSONField
 from django.utils import timezone
+from django.utils.text import slugify
 
 class PropFirm(models.Model):
     STATUS_CHOICES = [
@@ -10,8 +11,10 @@ class PropFirm(models.Model):
 
     # Basic Prop Firm Fields
     name = models.CharField(max_length=250, unique=True)
+    slug = models.SlugField(unique=True, blank=True)
     about = models.TextField(blank=True)
     website = models.URLField(null=True, blank=True, unique=True)
+    broker = models.CharField(max_length=250, null=True, blank=True)
     year_established = models.CharField(max_length=100, null=True, blank=True)
     location = models.CharField(max_length=250, null=True, blank=True)
     firm_type = models.CharField(max_length=100, blank=True)
@@ -70,7 +73,7 @@ class PropFirm(models.Model):
         ('MT5', 'MT5'),
         ('CTrader', 'CTrader'),
         ('MatchTrader', 'MatchTrader'),
-        ('DXTrade', 'DXTrade'), 
+        ('DXTrade', 'DXTrade'),
         ('TradeLocker', 'TradeLocker'),
         ('Trading View', 'Trading View'),
         ('In-House Trading Platform', 'In-House Trading Platform'),
@@ -82,12 +85,27 @@ class PropFirm(models.Model):
         default=list,
     )
 
-    # New fields
-    is_active = models.BooleanField(default=True)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
-    date_published = models.DateTimeField(null=True, blank=True, default=timezone.now)
-    date_created = models.DateTimeField(default=timezone.now)
-    date_updated = models.DateTimeField(auto_now=True)
+    # New fields with indexing
+    is_active = models.BooleanField(default=True, db_index=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft', db_index=True)
+    date_published = models.DateTimeField(null=True, blank=True, default=timezone.now, db_index=True)
+    date_created = models.DateTimeField(default=timezone.now, db_index=True)
+    date_updated = models.DateTimeField(auto_now=True, db_index=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            # Generate initial slug
+            self.slug = slugify(self.name, allow_unicode=True).replace('-', '_')
+            original_slug = self.slug
+
+            # Ensure uniqueness by appending a counter if needed
+            queryset = PropFirm.objects.filter(slug=original_slug).exclude(pk=self.pk)
+            counter = 1
+            while queryset.exists():
+                self.slug = f'{original_slug}_{counter}'
+                counter += 1
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -114,13 +132,14 @@ class AccountPlan(models.Model):
         ('Futures', 'Futures'),
     ]
 
+    # ForeignKey relationship with PropFirm (automatically indexed)
     prop_firm = models.ForeignKey(
         PropFirm, related_name="account_plans", on_delete=models.CASCADE
     )
-    phase = models.CharField(max_length=50, default="two_phase", choices=PHASE_CHOICES)
+    phase = models.CharField(max_length=50, default="two_phase", choices=PHASE_CHOICES, db_index=True)
     account_type = models.CharField(max_length=50, default="Forex", choices=ACCOUNT_TYPE_CHOICES)
-    account_size = models.CharField(max_length=50)
-    price = models.DecimalField(max_digits=20, decimal_places=2)
+    account_size = models.CharField(max_length=50, db_index=True)
+    price = models.DecimalField(max_digits=20, decimal_places=2, db_index=True)
     profit_split_ratio = models.CharField(max_length=50, default="0")
     leverage = models.CharField(max_length=50, default="0")
     minimum_trading_days = models.CharField(max_length=50, default="0")
@@ -132,7 +151,7 @@ class AccountPlan(models.Model):
     # New fields
     currency = models.CharField(max_length=10, default="USD")
     is_available = models.BooleanField(default=True)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft', db_index=True)
 
     def __str__(self):
         return f"{self.phase} - {self.account_size}"

@@ -11,6 +11,7 @@ class PropFirmListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        firms = PropFirm.objects.all()
+        # Optimize the query by prefetching related account plans
+        firms = PropFirm.objects.prefetch_related('account_plans').all()
         serializer = self.get_serializer(firms, many=True)
         return Response(serializer.data)
