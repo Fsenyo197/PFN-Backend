@@ -54,7 +54,7 @@ class PropFirmAdmin(admin.ModelAdmin):
 
     list_display = (
         'name',
-        'website',
+        'slug',
         'year_established',
         'firm_type',
         'location',
@@ -71,7 +71,7 @@ class PropFirmAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': (
-                'name', 'slug', 'about', 'broker', 'website', 'year_established', 'firm_type', 'location',
+                'name', 'slug', 'about', 'website', 'year_established', 'firm_type', 'location',
                 'drawdown_type', 'payout_frequency', 'is_active', 'status',
             ),
         }),

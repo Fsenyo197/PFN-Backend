@@ -14,7 +14,6 @@ class PropFirm(models.Model):
     slug = models.SlugField(unique=False, blank=True)
     about = models.TextField(blank=True)
     website = models.URLField(null=True, blank=True, unique=True)
-    broker = models.CharField(max_length=250, null=True, blank=True)
     year_established = models.CharField(max_length=100, null=True, blank=True)
     location = models.CharField(max_length=250, null=True, blank=True)
     firm_type = models.CharField(max_length=100, blank=True)
