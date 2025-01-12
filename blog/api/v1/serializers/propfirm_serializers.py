@@ -3,11 +3,11 @@ from blog.models.propfirm_model import PropFirm, AccountPlan
 
 
 class AccountPlanSerializer(serializers.ModelSerializer):
-    """Serializer for AccountPlan model."""
+    """Serializer for AccountPlan model.""" 
 
     class Meta:
         model = AccountPlan
-        exclude = ['date_created', 'date_updated', 'status', 'is_available']
+        exclude = ['status', 'is_available']
 
 
 class PropFirmSerializer(serializers.ModelSerializer):
