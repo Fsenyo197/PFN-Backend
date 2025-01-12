@@ -11,9 +11,8 @@ class PropFirmListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        # Use Q to filter by 'status=draft' OR 'is_active=False'
         firms = PropFirm.objects.prefetch_related('account_plans').filter(
-            Q(status='draft') | Q(is_active=False)
+            Q(status='publish') & Q(is_active=True)
         )
         serializer = self.get_serializer(firms, many=True)
         return Response(serializer.data)
