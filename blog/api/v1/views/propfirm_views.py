@@ -12,7 +12,7 @@ class PropFirmListView(generics.ListAPIView):
 
     def get(self, request, *args, **kwargs):
         firms = PropFirm.objects.prefetch_related('account_plans').filter(
-            Q(status='publish') & Q(is_active=True)
+            Q(status='published') & Q(is_active=True)
         )
         serializer = self.get_serializer(firms, many=True)
         return Response(serializer.data)
