@@ -114,7 +114,6 @@ class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
     ordering = ['name']
 
-
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
     list_display = (
@@ -138,9 +137,11 @@ class ArticleAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': (
-                'category', 'title', 'slug', 'image', 'image_credit', 'body',
-                'status', 'meta_description', 'meta_keywords', 'date_published',
-                'views', 'count_words', 'read_time',
+                'category', 'title', 'slug',
+                ('image', 'image_url'),
+                'image_credit', 'body', 'status',
+                'meta_description', 'meta_keywords',
+                'date_published', 'views', 'count_words', 'read_time',
             ),
         }),
         ('Discount Information', {
@@ -151,3 +152,13 @@ class ArticleAdmin(admin.ModelAdmin):
             'classes': ('collapse',),
         }),
     )
+
+    def save_model(self, request, obj, form, change):
+        """
+        Ensure validation for either `image` or `image_url` when saving via admin.
+        """
+        if obj.image and obj.image_url:
+            raise ValueError("Provide either an uploaded image or a Cloudinary image link, not both.")
+        if not obj.image and not obj.image_url:
+            raise ValueError("You must provide either an uploaded image or a Cloudinary image link.")
+        super().save_model(request, obj, form, change)

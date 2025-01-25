@@ -7,6 +7,7 @@ from blog.utils.blog_utils import count_words, read_time
 from blog.models.category_model import Category
 from cloudinary.models import CloudinaryField
 
+
 class ArticleManager(models.Manager):
     def get_queryset(self):
         # Override default to exclude 'deleted' articles
@@ -15,6 +16,7 @@ class ArticleManager(models.Manager):
     def deleted(self):
         # Custom queryset for retrieving only deleted articles
         return super().get_queryset().filter(deleted=True)
+
 
 class Article(models.Model):
     # Article and discount status constants
@@ -31,7 +33,8 @@ class Article(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='articles')
     title = models.CharField(max_length=250, null=False, blank=False)
     slug = models.SlugField(unique=True)
-    image = CloudinaryField('image', null=True, blank=True) 
+    image = CloudinaryField('image', null=True, blank=True)
+    image_url = models.URLField(max_length=500, null=True, blank=True, verbose_name="Cloudinary Image URL")
     image_credit = models.CharField(max_length=250, null=True, blank=True)
     body = HTMLField(blank=True)
     tags = TaggableManager(blank=True)
@@ -69,7 +72,13 @@ class Article(models.Model):
         return self.title
 
     def save(self, *args, **kwargs):
-        # Ensure slug uniqueness by checking if a slug exists for a different article
+        # Ensure either `image` or `image_url` is provided, not both
+        if self.image and self.image_url:
+            raise ValueError("Provide either an uploaded image or a Cloudinary image link, not both.")
+        if not self.image and not self.image_url:
+            raise ValueError("You must provide either an uploaded image or a Cloudinary image link.")
+
+        # Ensure slug uniqueness
         if not self.slug:
             self.slug = slugify(self.title, allow_unicode=True)
             original_slug = self.slug

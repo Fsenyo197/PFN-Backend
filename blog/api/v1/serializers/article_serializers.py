@@ -15,8 +15,11 @@ class ArticleSerializer(serializers.ModelSerializer):
         )
 
     def get_image(self, obj):
+        # Return the uploaded image URL if present; otherwise, return the Cloudinary image URL
         if obj.image:
             return obj.image.url if hasattr(obj.image, 'url') else obj.image
+        if obj.image_url:
+            return obj.image_url
         return None
 
     def get_discount_details(self, obj):
