@@ -2,7 +2,6 @@ from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 from taggit.managers import TaggableManager
-from tinymce.models import HTMLField
 from blog.utils.blog_utils import count_words, read_time
 from blog.models.category_model import Category
 from cloudinary.models import CloudinaryField
@@ -36,7 +35,7 @@ class Article(models.Model):
     image = CloudinaryField('image', null=True, blank=True)
     image_url = models.URLField(max_length=500, null=True, blank=True, verbose_name="Cloudinary Image URL")
     image_credit = models.CharField(max_length=250, null=True, blank=True)
-    body = HTMLField(blank=True)
+    body = models.TextField(blank=True)  # Changed from HTMLField to TextField
     tags = TaggableManager(blank=True)
     date_published = models.DateTimeField(null=True, blank=True, default=timezone.now)
     date_created = models.DateTimeField(auto_now_add=True)
