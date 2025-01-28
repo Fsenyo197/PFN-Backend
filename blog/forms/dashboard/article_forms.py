@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import TextInput, Select, FileInput
-from tinymce.widgets import TinyMCE
+from django_summernote.widgets import SummernoteWidget
 from blog.models.article_model import Article
 from blog.models.category_model import Category
 
@@ -37,9 +37,11 @@ class ArticleCreateForm(forms.ModelForm):
             'image_credit': TextInput(attrs={
                 'class': "form-control",
             }),
-            'body': TinyMCE(attrs={
-                "rows": 5,
-                "cols": 20,
+            'body': SummernoteWidget(attrs={  # Use SummernoteWidget
+                'summernote': {
+                    'width': '100%',
+                    'height': '400',
+                },
             }),
             'tags': TextInput(attrs={
                 'class': "form-control",
@@ -65,33 +67,22 @@ class ArticleCreateForm(forms.ModelForm):
         return cleaned_data
 
 
-
 class ArticleUpdateForm(forms.ModelForm):
-    category = forms.ModelChoiceField(queryset=Category.objects.filter(
-                                      approved=True),
-                                      empty_label="Select Category",
-                                      widget=forms.Select(attrs=
-                                                          {
-                                                              "class": "form-control selectpicker",
-                                                              "type": "text",
-                                                              "name": "article-category",
-                                                              "id": "articleCategory",
-                                                              "data-live-search": "true"
-                                                          }
-                                      )
-                                    )
+    category = forms.ModelChoiceField(
+        queryset=Category.objects.filter(approved=True),
+        empty_label="Select Category",
+        widget=forms.Select(
+            attrs={
+                "class": "form-control selectpicker",
+                "type": "text",
+                "name": "article-category",
+                "id": "articleCategory",
+                "data-live-search": "true"
+            }
+        )
+    )
 
     class Meta:
-        # Article status constants
-        DRAFTED = "DRAFTED"
-        PUBLISHED = "PUBLISHED"
-
-        # CHOICES
-        STATUS_CHOICES = (
-            (DRAFTED, 'Draft'),
-            (PUBLISHED, 'Publish'),
-        )
-
         model = Article
         fields = ["title", "category", "image", "image_credit", "body", "tags", "status"]
         widgets = {
@@ -100,36 +91,28 @@ class ArticleUpdateForm(forms.ModelForm):
                 'class': "form-control",
                 'id': "articleTitle"
             }),
-
             'image_credit': TextInput(attrs={
                 'name': "image_credit",
                 'class': "form-control",
                 'id': "image_credit"
             }),
-
-            'status': Select(choices=STATUS_CHOICES,
-                             attrs=
-                             {
-                                 "class": "form-control selectpicker",
-                                 "name": "status", "type": "text",
-                                 "id": "articleStatus",
-                                 "data-live-search": "true",
-                                 "title": "Select Status"
-                             }
-                             ),
-            'body': forms.CharField(widget=TinyMCE(attrs={
-                       "rows": 5, "cols": 20,
-                       'id': 'content',
-                       'name': "article_content",
-                       'class': "form-control",
-                       })),
-
+            'status': Select(choices=Article.STATUS_CHOICES, attrs={
+                "class": "form-control selectpicker",
+                "name": "status", "type": "text",
+                "id": "articleStatus",
+                "data-live-search": "true",
+                "title": "Select Status"
+            }),
+            'body': SummernoteWidget(attrs={  # Use SummernoteWidget
+                'summernote': {
+                    'width': '100%',
+                    'height': '400',
+                },
+            }),
             'image': FileInput(attrs={
                 "class": "form-control clearablefileinput",
                 "type": "file",
                 "id": "articleImage",
                 "name": "article-image",
-            }
-
-            ),
+            }),
         }
