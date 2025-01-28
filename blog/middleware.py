@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.conf import settings
 from datetime import timedelta
 
+
 class SessionTimeoutMiddleware:
     """
     Middleware to ensure the session expires after a specific inactivity period.
@@ -46,11 +47,11 @@ class APIKeyAuthMiddleware(MiddlewareMixin):
     """
 
     def process_request(self, request):
-        # Resolve the current URL to skip admin routes
+        # Resolve the current URL to skip admin and Summernote routes
         resolved_url = resolve(request.path_info)
 
-        # Skip authentication for admin routes
-        if resolved_url.app_name == "admin":
+        # Skip authentication for admin and Summernote routes
+        if 'summernote' in resolved_url.route or 'admin' in resolved_url.route:
             return None
 
         # Retrieve API key and secret from request headers

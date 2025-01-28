@@ -64,6 +64,9 @@ INSTALLED_APPS = [
 
     # My apps.
     'blog.apps.BlogConfig',
+
+    # Summernote
+    'django_summernote',
 ]
 
 MIDDLEWARE = [
@@ -185,34 +188,26 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # EMAIL_PORT = 587 
 # EMAIL_USE_TLS = True
 
-# TinyMCE Settings
-TINYMCE_DEFAULT_CONFIG = {
-    'height': 500,
-    'width': 900,
-    'cleanup_on_startup': True,
-    'custom_undo_redo_levels': 20,
-    'selector': 'textarea',
-    'theme': 'silver', 
-    'plugins': '''
-        save link image media preview codesample table code lists fullscreen insertdatetime nonbreaking
-        directionality searchreplace wordcount visualblocks visualchars autolink lists charmap print anchor pagebreak
-    ''',
-    'toolbar1': '''
-        fullscreen preview bold italic underline | fontselect,
-        fontsizeselect  | forecolor backcolor | alignleft alignright |
-        aligncenter alignjustify | indent outdent | bullist numlist table |
-        link image media | codesample |
-    ''',
-    'toolbar2': '''
-        visualblocks visualchars |
-        charmap hr pagebreak nonbreaking anchor | code |
-    ''',
-    'contextmenu': 'formats | link image',
-    'menubar': True,
-    'statusbar': True,
-    'images_upload_url': '/tinymce/upload_image/',
-    'automatic_uploads': True,
-    'file_picker_types': 'image',
+SUMMERNOTE_THEME = 'bs4'
+
+SUMMERNOTE_CONFIG = {
+    'iframe': True,
+    'summernote': {
+        'width': '800',
+        'height': '480',
+    },
+    'toolbar': [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['fontname', ['fontname']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['view', ['fullscreen', 'codeview', 'help']],
+        ],
+    'attachment_absolute_uri': True, 
+    'upload_callback': 'summernote_image_upload',
 }
 
 # CORS Configuration
