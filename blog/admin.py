@@ -4,6 +4,7 @@ from blog.models.article_model import Article
 from blog.models.category_model import Category
 from blog.forms.dashboard.propfirm_form import PropFirmForm
 from blog.models.apikeys_model import APIKey
+from django_summernote.admin import SummernoteModelAdmin
 
 
 @admin.register(APIKey)
@@ -114,8 +115,9 @@ class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
     ordering = ['name']
 
+
 @admin.register(Article)
-class ArticleAdmin(admin.ModelAdmin):
+class ArticleAdmin(SummernoteModelAdmin):
     list_display = (
         'category',
         'title',
@@ -133,6 +135,8 @@ class ArticleAdmin(admin.ModelAdmin):
     ordering = ['status', '-date_created']
 
     readonly_fields = ('views', 'count_words', 'read_time', 'date_created', 'date_updated')
+
+    summernote_fields = ('body',)  # Apply Summernote to the 'body' field
 
     fieldsets = (
         (None, {
